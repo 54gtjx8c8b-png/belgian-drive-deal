@@ -130,6 +130,21 @@ const FAQ = () => {
         {/* FAQ Section */}
         <section className="container mx-auto px-6 pb-16">
           <div className="max-w-3xl mx-auto">
+            {/* Results counter */}
+            {searchQuery && (
+              <div className="mb-6 text-center">
+                <span className="text-sm text-muted-foreground">
+                  {filteredFaqs.length === 0 
+                    ? "Aucun résultat" 
+                    : filteredFaqs.length === 1 
+                      ? "1 résultat trouvé" 
+                      : `${filteredFaqs.length} résultats trouvés`}
+                  {" pour "}
+                  <span className="font-medium text-foreground">"{searchQuery}"</span>
+                </span>
+              </div>
+            )}
+            
             {filteredFaqs.length === 0 ? (
               <div className="text-center py-12">
                 <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
