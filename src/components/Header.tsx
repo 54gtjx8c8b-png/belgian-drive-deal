@@ -206,78 +206,156 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            {/* Theme Toggle Mobile */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </Button>
+            
+            <button
+              className="p-2 text-foreground"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-border animate-fade-up">
-            <nav className="flex flex-col gap-3">
-              <Link to="/" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>{t("nav.buy")}</Link>
-              <Link to="/sell" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>{t("nav.sell")}</Link>
-              <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                <Heart className="w-4 h-4" />
+          <div 
+            className="md:hidden fixed inset-0 top-[60px] bg-background/95 backdrop-blur-xl z-50 overflow-y-auto"
+            style={{ height: 'calc(100vh - 60px)' }}
+          >
+            <nav className="flex flex-col p-6 gap-1">
+              <Link 
+                to="/" 
+                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t("nav.buy")}
+              </Link>
+              <Link 
+                to="/sell" 
+                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t("nav.sell")}
+              </Link>
+              <Link 
+                to="/favorites" 
+                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Heart className="w-5 h-5" />
                 {t("nav.favorites")}
               </Link>
-              <Link to="/compare" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                <GitCompareArrows className="w-4 h-4" />
+              <Link 
+                to="/compare" 
+                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <GitCompareArrows className="w-5 h-5" />
                 {t("nav.compare")}
                 {compareCount > 0 && (
-                  <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1.5">
+                  <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-2">
                     {compareCount}
                   </span>
                 )}
               </Link>
-              <Link to="/faq" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                <HelpCircle className="w-4 h-4" />
+              <Link 
+                to="/faq" 
+                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <HelpCircle className="w-5 h-5" />
                 {t("nav.faq")}
               </Link>
               {user && (
-                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                  <MessageCircle className="w-4 h-4" />
+                <Link 
+                  to="/messages" 
+                  className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <MessageCircle className="w-5 h-5" />
                   {t("nav.messages")}
                   {hasUnread && (
-                    <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1.5">
+                    <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-2">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </Link>
               )}
-              
-              {/* Theme toggle mobile */}
-              <button 
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-foreground font-medium py-2 flex items-center gap-2"
-              >
-                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                {theme === "dark" ? t("theme.light") : t("theme.dark")}
-              </button>
 
-              <div className="h-px bg-border my-2" />
+              <div className="h-px bg-border my-4" />
+
+              {/* Language Selector Mobile */}
+              <div className="px-4 py-2">
+                <p className="text-sm text-muted-foreground mb-3">{t("nav.language") || "Langue"}</p>
+                <div className="flex gap-2">
+                  {(["fr", "nl", "en"] as const).map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => setLanguage(lang)}
+                      className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors ${
+                        language === lang 
+                          ? "bg-primary text-primary-foreground" 
+                          : "bg-secondary text-foreground hover:bg-secondary/80"
+                      }`}
+                    >
+                      {lang.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="h-px bg-border my-4" />
               
               {user ? (
                 <>
-                  <Link to="/dashboard" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                    <LayoutDashboard className="w-4 h-4" />
+                  <Link 
+                    to="/dashboard" 
+                    className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
                     {t("nav.dashboard")}
                   </Link>
-                  <Link to="/settings" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                    <Settings className="w-4 h-4" />
+                  <Link 
+                    to="/settings" 
+                    className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="w-5 h-5" />
                     {t("nav.settings")}
                   </Link>
-                  <Button variant="outline" className="w-full rounded-xl mt-2" onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
+                  <Button 
+                    variant="outline" 
+                    className="w-full rounded-xl mt-4 h-12" 
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="w-5 h-5 mr-2" />
                     {t("nav.logout")}
                   </Button>
                 </>
               ) : (
-                <Button className="w-full rounded-xl mt-2" onClick={() => navigate("/auth")}>
-                  <User className="w-4 h-4 mr-2" />
+                <Button 
+                  className="w-full rounded-xl mt-4 h-12" 
+                  onClick={() => {
+                    navigate("/auth");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <User className="w-5 h-5 mr-2" />
                   {t("nav.login")}
                 </Button>
               )}

@@ -1,5 +1,6 @@
 import CarCard, { Car } from "./CarCard";
 import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CarGridProps {
   cars: Car[];
@@ -18,14 +19,6 @@ interface CarGridProps {
   activeFiltersCount: number;
 }
 
-const sortOptions = [
-  { value: "recent", label: "Plus récentes" },
-  { value: "price-asc", label: "Prix croissant" },
-  { value: "price-desc", label: "Prix décroissant" },
-  { value: "year-desc", label: "Année décroissante" },
-  { value: "km-asc", label: "Kilométrage croissant" },
-];
-
 const CarGrid = ({
   cars,
   onOpenFilters,
@@ -42,6 +35,16 @@ const CarGrid = ({
   totalItems,
   activeFiltersCount,
 }: CarGridProps) => {
+  const { t, language } = useLanguage();
+
+  const sortOptions = [
+    { value: "recent", label: language === "nl" ? "Meest recent" : language === "en" ? "Most recent" : "Plus récentes" },
+    { value: "price-asc", label: language === "nl" ? "Prijs oplopend" : language === "en" ? "Price ascending" : "Prix croissant" },
+    { value: "price-desc", label: language === "nl" ? "Prijs aflopend" : language === "en" ? "Price descending" : "Prix décroissant" },
+    { value: "year-desc", label: language === "nl" ? "Jaar aflopend" : language === "en" ? "Year descending" : "Année décroissante" },
+    { value: "km-asc", label: language === "nl" ? "Km oplopend" : language === "en" ? "Mileage ascending" : "Kilométrage croissant" },
+  ];
+
   const renderPagination = () => {
     const pages = [];
     const maxVisiblePages = 5;
@@ -71,16 +74,25 @@ const CarGrid = ({
     return pages;
   };
 
+  const availableLabel = language === "nl" ? "Beschikbare voertuigen" : language === "en" ? "Available vehicles" : "Véhicules disponibles";
+  const onLabel = language === "nl" ? "op" : language === "en" ? "of" : "sur";
+  const vehiclesLabel = language === "nl" ? "voertuigen" : language === "en" ? "vehicles" : "véhicules";
+  const filtersLabel = t("filters.title");
+  const noVehiclesTitle = language === "nl" ? "Geen voertuigen gevonden" : language === "en" ? "No vehicles found" : "Aucun véhicule trouvé";
+  const noVehiclesDesc = language === "nl" ? "Wijzig uw zoekcriteria om overeenkomende voertuigen te vinden." : language === "en" ? "Modify your search criteria to find matching vehicles." : "Modifiez vos critères de recherche pour trouver des véhicules correspondants.";
+  const prevLabel = language === "nl" ? "Vorige" : language === "en" ? "Previous" : "Précédent";
+  const nextLabel = language === "nl" ? "Volgende" : language === "en" ? "Next" : "Suivant";
+
   return (
-    <div className="flex-1">
+    <div className="flex-1 min-w-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="font-display text-2xl font-bold text-foreground">
-            Véhicules disponibles
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+            {availableLabel}
           </h2>
-          <p className="text-muted-foreground mt-1">
-            {startItem}-{endItem} sur {totalItems} véhicules
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+            {startItem}-{endItem} {onLabel} {totalItems} {vehiclesLabel}
           </p>
         </div>
 
@@ -88,10 +100,10 @@ const CarGrid = ({
           {/* Mobile filter button */}
           <button
             onClick={onOpenFilters}
-            className="lg:hidden flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary text-foreground font-medium relative"
+            className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-foreground font-medium relative touch-manipulation"
           >
             <SlidersHorizontal className="w-4 h-4" />
-            Filtres
+            {filtersLabel}
             {activeFiltersCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
                 {activeFiltersCount}
@@ -104,7 +116,7 @@ const CarGrid = ({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="search-input w-full sm:w-48 appearance-none cursor-pointer pr-10"
+              className="search-input w-full sm:w-48 appearance-none cursor-pointer pr-10 text-sm sm:text-base"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -119,7 +131,7 @@ const CarGrid = ({
 
       {/* Grid */}
       {cars.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {cars.map((car, index) => (
             <div
               key={car.id}
@@ -136,29 +148,29 @@ const CarGrid = ({
           ))}
         </div>
       ) : (
-        <div className="text-center py-20">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
-            <SlidersHorizontal className="w-8 h-8 text-muted-foreground" />
+        <div className="text-center py-16 sm:py-20">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
+            <SlidersHorizontal className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
           </div>
-          <h3 className="font-display text-xl font-bold text-foreground mb-2">
-            Aucun véhicule trouvé
+          <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
+            {noVehiclesTitle}
           </h3>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Modifiez vos critères de recherche pour trouver des véhicules correspondants.
+          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4">
+            {noVehiclesDesc}
           </p>
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-foreground font-medium hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-foreground font-medium hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
           >
             <ChevronLeft className="w-4 h-4" />
-            Précédent
+            {prevLabel}
           </button>
 
           <div className="flex items-center gap-2">{renderPagination()}</div>
@@ -166,9 +178,9 @@ const CarGrid = ({
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-foreground font-medium hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-foreground font-medium hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
           >
-            Suivant
+            {nextLabel}
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
