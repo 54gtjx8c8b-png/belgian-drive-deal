@@ -77,6 +77,7 @@ const SellerDashboard = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<ListingStats | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState<7 | 30 | 90>(30);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -101,11 +102,16 @@ const SellerDashboard = () => {
   useEffect(() => {
     if (user) {
       fetchStats();
-      fetchDailyStats();
     }
   }, [user]);
 
-  const fetchDailyStats = async () => {
+  useEffect(() => {
+    if (user) {
+      fetchDailyStats(chartPeriod);
+    }
+  }, [user, chartPeriod]);
+
+  const fetchDailyStats = async (days: number) => {
     if (!user) return;
 
     try {
@@ -121,14 +127,14 @@ const SellerDashboard = () => {
       }
 
       const listingIds = userListings.map(l => l.id);
-      const thirtyDaysAgo = subDays(new Date(), 30);
+      const startDate = subDays(new Date(), days);
 
       // Fetch views with dates
       const { data: viewsData } = await supabase
         .from("car_views")
         .select("viewed_at")
         .in("car_listing_id", listingIds)
-        .gte("viewed_at", thirtyDaysAgo.toISOString());
+        .gte("viewed_at", startDate.toISOString());
 
       // Fetch conversations with dates
       const { data: conversationsData } = await supabase
@@ -136,18 +142,18 @@ const SellerDashboard = () => {
         .select("created_at")
         .eq("seller_id", user.id)
         .in("car_listing_id", listingIds)
-        .gte("created_at", thirtyDaysAgo.toISOString());
+        .gte("created_at", startDate.toISOString());
 
       // Fetch favorites with dates
       const { data: favoritesData } = await supabase
         .from("favorites")
         .select("created_at")
         .in("car_listing_id", listingIds)
-        .gte("created_at", thirtyDaysAgo.toISOString());
+        .gte("created_at", startDate.toISOString());
 
-      // Generate all days in the last 30 days
-      const days = eachDayOfInterval({
-        start: thirtyDaysAgo,
+      // Generate all days in the period
+      const allDays = eachDayOfInterval({
+        start: startDate,
         end: new Date()
       });
 
@@ -172,7 +178,7 @@ const SellerDashboard = () => {
       });
 
       // Build daily stats array
-      const stats: DailyStats[] = days.map(day => {
+      const stats: DailyStats[] = allDays.map(day => {
         const dateKey = format(day, "yyyy-MM-dd");
         return {
           date: dateKey,
@@ -452,14 +458,26 @@ const SellerDashboard = () => {
 
             {/* Combined Chart */}
             <Card className="bg-card border-border mb-8">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-foreground">
                   <TrendingUp className="w-5 h-5 text-primary" />
                   Performance globale
-                  <span className="text-sm font-normal text-muted-foreground ml-auto">
-                    30 derniers jours
-                  </span>
                 </CardTitle>
+                <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+                  {([7, 30, 90] as const).map((period) => (
+                    <button
+                      key={period}
+                      onClick={() => setChartPeriod(period)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                        chartPeriod === period
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {period}j
+                    </button>
+                  ))}
+                </div>
               </CardHeader>
               <CardContent>
                 {loading ? (
