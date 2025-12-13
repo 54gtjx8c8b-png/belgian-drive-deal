@@ -1,10 +1,11 @@
-import { Car, Menu, User, LogOut } from "lucide-react";
+import { Car, Menu, User, LogOut, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
