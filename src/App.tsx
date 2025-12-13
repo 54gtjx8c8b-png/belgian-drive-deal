@@ -14,6 +14,7 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Compare from "./pages/Compare";
 import SellerDashboard from "./pages/SellerDashboard";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/compare" element={<Compare />} />
             <Route path="/dashboard" element={<SellerDashboard />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

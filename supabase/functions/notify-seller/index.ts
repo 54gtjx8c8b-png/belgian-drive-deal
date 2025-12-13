@@ -46,6 +46,22 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Conversation not found");
     }
 
+    // Check if seller has email notifications enabled
+    const { data: preferences } = await supabaseAdmin
+      .from("user_preferences")
+      .select("email_notifications_enabled")
+      .eq("user_id", conversation.seller_id)
+      .single();
+
+    // If preferences exist and notifications are disabled, skip sending
+    if (preferences && !preferences.email_notifications_enabled) {
+      console.log("Email notifications disabled for seller, skipping");
+      return new Response(JSON.stringify({ success: true, skipped: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     // Get seller's email from auth.users
     const { data: sellerData, error: sellerError } = await supabaseAdmin.auth.admin.getUserById(
       conversation.seller_id
