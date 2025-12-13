@@ -16,7 +16,6 @@ import {
   MessageCircle,
   ChevronLeft,
   ChevronRight,
-  Check,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -28,6 +27,9 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
 import { supabase } from "@/integrations/supabase/client";
+import TransparencyChecklist from "@/components/TransparencyChecklist";
+import LezWidget from "@/components/LezWidget";
+import SellerBadge from "@/components/SellerBadge";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -368,38 +370,15 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 </div>
               </div>
 
-              {/* Car-Pass Transparency */}
-              <div className="glass-card p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="font-display text-xl font-bold text-foreground">
-                      Transparence Car-Pass
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      Historique vérifié du véhicule
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {[
-                    "Historique kilométrique vérifié",
-                    "Aucun accident déclaré",
-                    "Entretien régulier chez un concessionnaire agréé",
-                    "Contrôle technique valide",
-                    "Compatible zones LEZ (Bruxelles, Anvers, Gand)",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                        <Check className="w-4 h-4 text-primary" />
-                      </div>
-                      <span className="text-foreground">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {/* Transparency Checklist */}
+              <TransparencyChecklist
+                carPassVerified={dbListing?.car_pass_verified}
+                ctValid={dbListing?.ct_valid}
+                maintenanceBookComplete={dbListing?.maintenance_book_complete}
+              />
+
+              {/* LEZ Widget */}
+              <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
 
               {/* Description */}
               <div className="glass-card p-6">
@@ -488,12 +467,17 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </Button>
                 </div>
 
-                <div className="mt-6 p-4 rounded-xl bg-secondary/50 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    {dbListing ? "Vendeur particulier" : "Vendeur professionnel vérifié"}
-                  </p>
-                  <p className="font-semibold text-foreground">{sellerName}</p>
-                </div>
+                {/* Seller Badge */}
+                <SellerBadge
+                  sellerType={dbListing?.seller_type}
+                  sellerName={sellerName}
+                  tvaNumber={dbListing?.tva_number}
+                />
+
+                {/* Disclaimer */}
+                <p className="mt-4 text-xs text-muted-foreground text-center">
+                  AutoRa n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
+                </p>
               </div>
             </div>
           </div>
