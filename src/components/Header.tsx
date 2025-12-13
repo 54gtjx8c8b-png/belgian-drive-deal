@@ -1,4 +1,4 @@
-import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, ChevronDown, Globe } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, ChevronDown, Globe, Sun, Moon } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -8,6 +8,7 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCompareContext } from "@/contexts/CompareContext";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ const Header = () => {
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -132,6 +134,16 @@ const Header = () => {
 
           {/* Desktop Actions - Right side */}
           <div className="hidden md:flex items-center gap-2">
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -228,6 +240,16 @@ const Header = () => {
                   )}
                 </Link>
               )}
+              
+              {/* Theme toggle mobile */}
+              <button 
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-foreground font-medium py-2 flex items-center gap-2"
+              >
+                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {theme === "dark" ? "Mode clair" : "Mode sombre"}
+              </button>
+
               <div className="h-px bg-border my-2" />
               
               {user ? (
