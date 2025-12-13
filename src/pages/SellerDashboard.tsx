@@ -38,7 +38,9 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Legend
+  Legend,
+  Line,
+  ComposedChart
 } from "recharts";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -62,6 +64,7 @@ interface DailyStats {
   dateLabel: string;
   views: number;
   messages: number;
+  favorites: number;
 }
 
 const SellerDashboard = () => {
@@ -135,15 +138,23 @@ const SellerDashboard = () => {
         .in("car_listing_id", listingIds)
         .gte("created_at", thirtyDaysAgo.toISOString());
 
+      // Fetch favorites with dates
+      const { data: favoritesData } = await supabase
+        .from("favorites")
+        .select("created_at")
+        .in("car_listing_id", listingIds)
+        .gte("created_at", thirtyDaysAgo.toISOString());
+
       // Generate all days in the last 30 days
       const days = eachDayOfInterval({
         start: thirtyDaysAgo,
         end: new Date()
       });
 
-      // Count views and messages per day
+      // Count views, messages and favorites per day
       const viewsByDay: Record<string, number> = {};
       const messagesByDay: Record<string, number> = {};
+      const favoritesByDay: Record<string, number> = {};
 
       viewsData?.forEach(v => {
         const day = format(startOfDay(new Date(v.viewed_at)), "yyyy-MM-dd");
@@ -155,6 +166,11 @@ const SellerDashboard = () => {
         messagesByDay[day] = (messagesByDay[day] || 0) + 1;
       });
 
+      favoritesData?.forEach(f => {
+        const day = format(startOfDay(new Date(f.created_at)), "yyyy-MM-dd");
+        favoritesByDay[day] = (favoritesByDay[day] || 0) + 1;
+      });
+
       // Build daily stats array
       const stats: DailyStats[] = days.map(day => {
         const dateKey = format(day, "yyyy-MM-dd");
@@ -163,6 +179,7 @@ const SellerDashboard = () => {
           dateLabel: format(day, "d MMM", { locale: fr }),
           views: viewsByDay[dateKey] || 0,
           messages: messagesByDay[dateKey] || 0,
+          favorites: favoritesByDay[dateKey] || 0,
         };
       });
 
@@ -433,126 +450,86 @@ const SellerDashboard = () => {
               </Card>
             </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Views Chart */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <TrendingUp className="w-5 h-5 text-blue-500" />
-                    Évolution des vues
-                    <span className="text-sm font-normal text-muted-foreground ml-auto">
-                      30 derniers jours
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <Skeleton className="h-[250px] w-full" />
-                  ) : dailyStats.length === 0 ? (
-                    <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                      Aucune donnée disponible
-                    </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height={250}>
-                      <AreaChart data={dailyStats} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis 
-                          dataKey="dateLabel" 
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                          tickLine={false}
-                          axisLine={false}
-                          interval="preserveStartEnd"
-                        />
-                        <YAxis 
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                          tickLine={false}
-                          axisLine={false}
-                          allowDecimals={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Area
-                          type="monotone"
-                          dataKey="views"
-                          name="Vues"
-                          stroke="#3b82f6"
-                          strokeWidth={2}
-                          fillOpacity={1}
-                          fill="url(#colorViews)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Messages Chart */}
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <MessageCircle className="w-5 h-5 text-green-500" />
-                    Évolution des messages
-                    <span className="text-sm font-normal text-muted-foreground ml-auto">
-                      30 derniers jours
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <Skeleton className="h-[250px] w-full" />
-                  ) : dailyStats.length === 0 ? (
-                    <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                      Aucune donnée disponible
-                    </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height={250}>
-                      <AreaChart data={dailyStats} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorMessages" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis 
-                          dataKey="dateLabel" 
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                          tickLine={false}
-                          axisLine={false}
-                          interval="preserveStartEnd"
-                        />
-                        <YAxis 
-                          tick={{ fontSize: 12 }}
-                          className="text-muted-foreground"
-                          tickLine={false}
-                          axisLine={false}
-                          allowDecimals={false}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Area
-                          type="monotone"
-                          dataKey="messages"
-                          name="Messages"
-                          stroke="#22c55e"
-                          strokeWidth={2}
-                          fillOpacity={1}
-                          fill="url(#colorMessages)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            {/* Combined Chart */}
+            <Card className="bg-card border-border mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Performance globale
+                  <span className="text-sm font-normal text-muted-foreground ml-auto">
+                    30 derniers jours
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : dailyStats.length === 0 ? (
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    Aucune donnée disponible
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <ComposedChart data={dailyStats} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorViewsCombined" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis 
+                        dataKey="dateLabel" 
+                        tick={{ fontSize: 11 }}
+                        className="text-muted-foreground"
+                        tickLine={false}
+                        axisLine={false}
+                        interval="preserveStartEnd"
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 11 }}
+                        className="text-muted-foreground"
+                        tickLine={false}
+                        axisLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend 
+                        wrapperStyle={{ paddingTop: 20 }}
+                        iconType="circle"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="views"
+                        name="Vues"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill="url(#colorViewsCombined)"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="messages"
+                        name="Messages"
+                        stroke="#22c55e"
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: "#22c55e" }}
+                        activeDot={{ r: 5 }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="favorites"
+                        name="Favoris"
+                        stroke="#ef4444"
+                        strokeWidth={2}
+                        dot={{ r: 3, fill: "#ef4444" }}
+                        activeDot={{ r: 5 }}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Listings Table */}
             <Card className="bg-card border-border">
