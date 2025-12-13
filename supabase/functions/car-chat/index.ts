@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const systemPrompt = `Tu es un assistant expert automobile pour AutoBelgica, une marketplace automobile belge.
+const systemPrompt = `Tu es un assistant expert automobile pour AutoRa, une marketplace automobile belge.
 
 Tu aides les utilisateurs avec:
 - Questions sur les voitures (caractéristiques, comparaisons, conseils d'achat)

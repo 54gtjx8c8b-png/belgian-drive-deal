@@ -250,7 +250,7 @@ const CarDetail = () => {
   const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
 Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
 
-  const sellerName = dbListing?.contact_name || "AutoBelgica Motors";
+  const sellerName = dbListing?.contact_name || "AutoRa Motors";
 
   return (
     <div className="min-h-screen bg-background dark">

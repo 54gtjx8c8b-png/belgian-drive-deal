@@ -46,7 +46,7 @@ const Header = () => {
               <Car className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="font-display text-xl font-bold text-foreground">
-              Auto<span className="gradient-text">Belgica</span>
+              Auto<span className="gradient-text">Ra</span>
             </span>
           </Link>
 
