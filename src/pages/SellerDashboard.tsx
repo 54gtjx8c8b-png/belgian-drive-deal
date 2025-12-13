@@ -44,7 +44,8 @@ import {
   ComposedChart
 } from "recharts";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, nl, enGB } from "date-fns/locale";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ListingStats {
   id: string;
@@ -70,6 +71,7 @@ interface DailyStats {
 
 const SellerDashboard = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [listings, setListings] = useState<ListingStats[]>([]);
@@ -79,6 +81,14 @@ const SellerDashboard = () => {
   const [listingToDelete, setListingToDelete] = useState<ListingStats | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<7 | 30 | 90>(30);
+
+  const getDateLocale = () => {
+    return language === "nl" ? nl : language === "en" ? enGB : fr;
+  };
+
+  const getLocaleString = () => {
+    return language === "nl" ? "nl-BE" : language === "en" ? "en-GB" : "fr-BE";
+  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -110,7 +120,7 @@ const SellerDashboard = () => {
     if (user) {
       fetchDailyStats(chartPeriod);
     }
-  }, [user, chartPeriod]);
+  }, [user, chartPeriod, language]);
 
   const fetchDailyStats = async (days: number) => {
     if (!user) return;
@@ -183,7 +193,7 @@ const SellerDashboard = () => {
         const dateKey = format(day, "yyyy-MM-dd");
         return {
           date: dateKey,
-          dateLabel: format(day, "d MMM", { locale: fr }),
+          dateLabel: format(day, "d MMM", { locale: getDateLocale() }),
           views: viewsByDay[dateKey] || 0,
           messages: messagesByDay[dateKey] || 0,
           favorites: favoritesByDay[dateKey] || 0,
@@ -303,10 +313,10 @@ const SellerDashboard = () => {
       if (error) throw error;
 
       setListings(prev => prev.filter(l => l.id !== listingToDelete.id));
-      toast.success("Annonce supprimée avec succès");
+      toast.success(t("dashboard.deleteSuccess"));
     } catch (error) {
       console.error("Error deleting listing:", error);
-      toast.error("Erreur lors de la suppression");
+      toast.error(t("dashboard.deleteError"));
     } finally {
       setDeleting(false);
       setDeleteDialogOpen(false);
@@ -320,7 +330,7 @@ const SellerDashboard = () => {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("fr-BE", {
+    return new Intl.NumberFormat(getLocaleString(), {
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0,
@@ -328,7 +338,7 @@ const SellerDashboard = () => {
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("fr-BE", {
+    return new Date(date).toLocaleDateString(getLocaleString(), {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -342,9 +352,9 @@ const SellerDashboard = () => {
       rejected: "bg-red-500/10 text-red-500",
     };
     const labels: Record<string, string> = {
-      approved: "Publiée",
-      pending: "En attente",
-      rejected: "Refusée",
+      approved: t("dashboard.published"),
+      pending: t("dashboard.pending"),
+      rejected: t("dashboard.rejected"),
     };
     return (
       <span className={`px-2 py-1 rounded-lg text-xs font-medium ${styles[status] || styles.pending}`}>
@@ -355,12 +365,20 @@ const SellerDashboard = () => {
 
   const exportToCSV = () => {
     // Headers
-    const headers = ["Véhicule", "Statut", "Prix", "Date de création", "Vues", "Messages", "Favoris"];
+    const headers = [
+      t("dashboard.vehicle"), 
+      t("dashboard.status"), 
+      t("dashboard.price"), 
+      t("dashboard.createdAt"), 
+      t("dashboard.views"), 
+      t("dashboard.messages"), 
+      t("dashboard.favorites")
+    ];
     
     // Rows
     const rows = listings.map(listing => [
       `${listing.brand} ${listing.model} ${listing.year}`,
-      listing.status === "approved" ? "Publiée" : listing.status === "pending" ? "En attente" : "Refusée",
+      listing.status === "approved" ? t("dashboard.published") : listing.status === "pending" ? t("dashboard.pending") : t("dashboard.rejected"),
       listing.price,
       formatDate(listing.created_at),
       listing.views,
@@ -370,7 +388,7 @@ const SellerDashboard = () => {
     
     // Add totals row
     rows.push([
-      "TOTAL",
+      t("dashboard.total"),
       "",
       "",
       "",
@@ -396,7 +414,7 @@ const SellerDashboard = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    toast.success("Export CSV téléchargé");
+    toast.success(t("dashboard.csvDownloaded"));
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -415,6 +433,11 @@ const SellerDashboard = () => {
     return null;
   };
 
+  const getDaysLabel = (days: number) => {
+    if (language === "en") return `${days}d`;
+    return `${days}j`;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -427,13 +450,13 @@ const SellerDashboard = () => {
               <div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                   <LayoutDashboard className="w-4 h-4" />
-                  Espace vendeur
+                  {t("dashboard.sellerArea")}
                 </div>
                 <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                  Tableau de <span className="gradient-text">bord</span>
+                  {t("dashboard.title")}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                  Suivez les performances de vos annonces
+                  {t("dashboard.subtitle")}
                 </p>
               </div>
               <Button
@@ -443,7 +466,7 @@ const SellerDashboard = () => {
                 disabled={loading || listings.length === 0}
               >
                 <Download className="w-4 h-4" />
-                Exporter CSV
+                {t("dashboard.exportCSV")}
               </Button>
             </div>
 
@@ -452,7 +475,7 @@ const SellerDashboard = () => {
               <Card className="bg-card border-border">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Annonces
+                    {t("dashboard.listings")}
                   </CardTitle>
                   <Car className="w-4 h-4 text-primary" />
                 </CardHeader>
@@ -468,7 +491,7 @@ const SellerDashboard = () => {
               <Card className="bg-card border-border">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Vues totales
+                    {t("dashboard.totalViews")}
                   </CardTitle>
                   <Eye className="w-4 h-4 text-blue-500" />
                 </CardHeader>
@@ -484,7 +507,7 @@ const SellerDashboard = () => {
               <Card className="bg-card border-border">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Messages
+                    {t("dashboard.messages")}
                   </CardTitle>
                   <MessageCircle className="w-4 h-4 text-green-500" />
                 </CardHeader>
@@ -500,7 +523,7 @@ const SellerDashboard = () => {
               <Card className="bg-card border-border">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Favoris
+                    {t("dashboard.favorites")}
                   </CardTitle>
                   <Heart className="w-4 h-4 text-red-500" />
                 </CardHeader>
@@ -519,7 +542,7 @@ const SellerDashboard = () => {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-foreground">
                   <TrendingUp className="w-5 h-5 text-primary" />
-                  Performance globale
+                  {t("dashboard.globalPerformance")}
                 </CardTitle>
                 <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
                   {([7, 30, 90] as const).map((period) => (
@@ -532,7 +555,7 @@ const SellerDashboard = () => {
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      {period}j
+                      {getDaysLabel(period)}
                     </button>
                   ))}
                 </div>
@@ -542,7 +565,7 @@ const SellerDashboard = () => {
                   <Skeleton className="h-[300px] w-full" />
                 ) : dailyStats.length === 0 ? (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    Aucune donnée disponible
+                    {t("dashboard.noDataAvailable")}
                   </div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
@@ -577,7 +600,7 @@ const SellerDashboard = () => {
                       <Area
                         type="monotone"
                         dataKey="views"
-                        name="Vues"
+                        name={t("dashboard.views")}
                         stroke="#3b82f6"
                         strokeWidth={2}
                         fillOpacity={1}
@@ -586,7 +609,7 @@ const SellerDashboard = () => {
                       <Line
                         type="monotone"
                         dataKey="messages"
-                        name="Messages"
+                        name={t("dashboard.messages")}
                         stroke="#22c55e"
                         strokeWidth={2}
                         dot={{ r: 3, fill: "#22c55e" }}
@@ -595,7 +618,7 @@ const SellerDashboard = () => {
                       <Line
                         type="monotone"
                         dataKey="favorites"
-                        name="Favoris"
+                        name={t("dashboard.favorites")}
                         stroke="#ef4444"
                         strokeWidth={2}
                         dot={{ r: 3, fill: "#ef4444" }}
@@ -612,7 +635,7 @@ const SellerDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
                   <BarChart3 className="w-5 h-5" />
-                  Détail par annonce
+                  {t("dashboard.detailByListing")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -626,13 +649,13 @@ const SellerDashboard = () => {
                   <div className="text-center py-12">
                     <Car className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                     <p className="text-muted-foreground mb-4">
-                      Vous n'avez pas encore d'annonces
+                      {t("dashboard.noListingsYet")}
                     </p>
                     <button
                       onClick={() => navigate("/sell")}
                       className="btn-primary-gradient"
                     >
-                      Créer une annonce
+                      {t("dashboard.createListing")}
                     </button>
                   </div>
                 ) : (
@@ -683,21 +706,21 @@ const SellerDashboard = () => {
                               <Eye className="w-4 h-4" />
                               <span className="font-semibold">{listing.views}</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">Vues</span>
+                            <span className="text-xs text-muted-foreground">{t("dashboard.views")}</span>
                           </div>
                           <div className="text-center hidden sm:block">
                             <div className="flex items-center gap-1 text-green-500">
                               <MessageCircle className="w-4 h-4" />
                               <span className="font-semibold">{listing.messages}</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">Messages</span>
+                            <span className="text-xs text-muted-foreground">{t("dashboard.messages")}</span>
                           </div>
                           <div className="text-center hidden sm:block">
                             <div className="flex items-center gap-1 text-red-500">
                               <Heart className="w-4 h-4" />
                               <span className="font-semibold">{listing.favorites}</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">Favoris</span>
+                            <span className="text-xs text-muted-foreground">{t("dashboard.favorites")}</span>
                           </div>
                         </div>
 
@@ -708,7 +731,6 @@ const SellerDashboard = () => {
                             size="icon"
                             className="h-9 w-9 rounded-lg"
                             onClick={(e) => handleEditClick(e, listing.id)}
-                            title="Modifier"
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
@@ -717,7 +739,6 @@ const SellerDashboard = () => {
                             size="icon"
                             className="h-9 w-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={(e) => handleDeleteClick(e, listing)}
-                            title="Supprimer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -736,25 +757,25 @@ const SellerDashboard = () => {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer cette annonce ?</AlertDialogTitle>
+            <AlertDialogTitle>{t("dashboard.deleteListing")}</AlertDialogTitle>
             <AlertDialogDescription>
               {listingToDelete && (
                 <>
-                  Êtes-vous sûr de vouloir supprimer l'annonce pour{" "}
+                  {t("dashboard.deleteConfirm")}{" "}
                   <strong>{listingToDelete.brand} {listingToDelete.model}</strong> ?
-                  Cette action est irréversible.
+                  {" "}{t("dashboard.deleteIrreversible")}
                 </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>{t("dashboard.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleting ? "Suppression..." : "Supprimer"}
+              {deleting ? t("dashboard.deleting") : t("dashboard.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

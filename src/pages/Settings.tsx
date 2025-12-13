@@ -9,9 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Bell, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -65,13 +67,13 @@ export default function Settings() {
       if (error) throw error;
       
       toast.success(enabled 
-        ? "Notifications email activées" 
-        : "Notifications email désactivées"
+        ? t("settings.emailEnabled")
+        : t("settings.emailDisabled")
       );
     } catch (error) {
       console.error("Error updating preferences:", error);
       setEmailNotifications(!enabled); // Revert on error
-      toast.error("Erreur lors de la mise à jour des préférences");
+      toast.error(t("settings.errorUpdate"));
     } finally {
       setIsSaving(false);
     }
@@ -96,29 +98,29 @@ export default function Settings() {
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Retour
+          {t("settings.back")}
         </Button>
 
-        <h1 className="text-3xl font-bold mb-8">Paramètres</h1>
+        <h1 className="text-3xl font-bold mb-8">{t("settings.title")}</h1>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
-              Notifications
+              {t("settings.notifications")}
             </CardTitle>
             <CardDescription>
-              Gérez vos préférences de notifications
+              {t("settings.notificationsDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="email-notifications" className="text-base">
-                  Notifications par email
+                  {t("settings.emailNotifications")}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Recevez un email quand un acheteur vous envoie un message
+                  {t("settings.emailNotificationsDesc")}
                 </p>
               </div>
               <Switch
@@ -133,14 +135,14 @@ export default function Settings() {
 
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Compte</CardTitle>
+            <CardTitle>{t("settings.account")}</CardTitle>
             <CardDescription>
-              Informations de votre compte
+              {t("settings.accountDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Email</p>
+              <p className="text-sm text-muted-foreground">{t("settings.email")}</p>
               <p className="font-medium">{user?.email}</p>
             </div>
           </CardContent>

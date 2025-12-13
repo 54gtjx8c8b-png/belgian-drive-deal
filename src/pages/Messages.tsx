@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Conversation {
   id: string;
@@ -23,6 +24,7 @@ interface Conversation {
 
 export default function Messages() {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -126,6 +128,10 @@ export default function Messages() {
     };
   }, [currentUserId]);
 
+  const getLocale = () => {
+    return language === "nl" ? "nl-BE" : language === "en" ? "en-GB" : "fr-BE";
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -133,13 +139,13 @@ export default function Messages() {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
-      return date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' });
     } else if (days === 1) {
-      return 'Hier';
+      return t("messages.yesterday");
     } else if (days < 7) {
-      return date.toLocaleDateString('fr-BE', { weekday: 'short' });
+      return date.toLocaleDateString(getLocale(), { weekday: 'short' });
     } else {
-      return date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' });
+      return date.toLocaleDateString(getLocale(), { day: 'numeric', month: 'short' });
     }
   };
 
@@ -161,17 +167,17 @@ export default function Messages() {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold text-foreground mb-8">Messages</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-8">{t("messages.title")}</h1>
 
           {conversations.length === 0 ? (
             <div className="text-center py-16">
               <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-foreground mb-2">Aucun message</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-2">{t("messages.noMessages")}</h2>
               <p className="text-muted-foreground mb-6">
-                Vous n'avez pas encore de conversations. Contactez un vendeur pour commencer.
+                {t("messages.noMessagesDesc")}
               </p>
               <Button onClick={() => navigate('/')}>
-                Voir les véhicules
+                {t("messages.viewVehicles")}
               </Button>
             </div>
           ) : (
@@ -179,7 +185,7 @@ export default function Messages() {
               {/* Conversations list */}
               <div className={`lg:col-span-1 bg-card rounded-xl border border-border overflow-hidden ${selectedConversation ? 'hidden lg:block' : ''}`}>
                 <div className="p-4 border-b border-border">
-                  <h2 className="font-semibold text-foreground">Conversations</h2>
+                  <h2 className="font-semibold text-foreground">{t("messages.conversations")}</h2>
                 </div>
                 <div className="overflow-y-auto h-full">
                   {conversations.map((conv) => (
@@ -216,7 +222,7 @@ export default function Messages() {
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground truncate mt-1">
-                          {conv.last_message || 'Aucun message'}
+                          {conv.last_message || t("messages.noMessage")}
                         </p>
                         {(conv.unread_count ?? 0) > 0 && (
                           <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium mt-1">
@@ -257,7 +263,7 @@ export default function Messages() {
                   <div className="flex-1 flex items-center justify-center text-muted-foreground">
                     <div className="text-center">
                       <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Sélectionnez une conversation</p>
+                      <p>{t("messages.selectConversation")}</p>
                     </div>
                   </div>
                 )}
