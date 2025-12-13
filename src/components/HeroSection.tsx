@@ -1,6 +1,7 @@
 import { Search, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getAllBrands } from "@/utils/carUtils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeroSectionProps {
   onSearch: (brand: string, model: string, maxPrice: number) => void;
@@ -20,6 +21,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [selectedBudget, setSelectedBudget] = useState<number>(0);
   const [model, setModel] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setBrands(getAllBrands());
@@ -46,7 +48,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 animate-fade-up">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Marché automobile belge
+            {t("hero.badge")}
           </div>
 
           {/* Headline */}
@@ -54,9 +56,9 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 animate-fade-up"
             style={{ animationDelay: "0.1s" }}
           >
-            Trouvez votre prochaine
+            {t("hero.title1")}
             <br />
-            <span className="gradient-text">voiture en Belgique</span>
+            <span className="gradient-text">{t("hero.title2")}</span>
           </h1>
 
           {/* Subheadline */}
@@ -64,8 +66,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-up"
             style={{ animationDelay: "0.2s" }}
           >
-            Des milliers de véhicules vérifiés, avec Car-Pass et compatibilité LEZ
-            garantie
+            {t("hero.subtitle")}
           </p>
 
           {/* Search Box */}
@@ -81,7 +82,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                   onChange={(e) => setSelectedBrand(e.target.value)}
                   className="search-input w-full appearance-none cursor-pointer pr-10"
                 >
-                  <option value="">Marque</option>
+                  <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
                     <option key={brand} value={brand}>
                       {brand}
@@ -95,7 +96,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Modèle"
+                  placeholder={t("filters.model")}
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   className="search-input"
@@ -109,7 +110,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                   onChange={(e) => setSelectedBudget(Number(e.target.value))}
                   className="search-input w-full appearance-none cursor-pointer pr-10"
                 >
-                  <option value={0}>Budget</option>
+                  <option value={0}>{t("filters.budget")}</option>
                   {budgets.map((budget) => (
                     <option key={budget.value} value={budget.value}>
                       {budget.label}
@@ -125,7 +126,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                 className="btn-primary-gradient flex items-center justify-center gap-2"
               >
                 <Search className="w-5 h-5" />
-                <span className="font-semibold">Rechercher</span>
+                <span className="font-semibold">{t("hero.search")}</span>
               </button>
             </div>
           </div>
@@ -139,19 +140,19 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
               <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
                 150+
               </div>
-              <div className="text-muted-foreground text-sm">Véhicules</div>
+              <div className="text-muted-foreground text-sm">{t("hero.vehicles")}</div>
             </div>
             <div className="text-center">
               <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
                 98%
               </div>
-              <div className="text-muted-foreground text-sm">Car-Pass vérifié</div>
+              <div className="text-muted-foreground text-sm">{t("hero.verified")}</div>
             </div>
             <div className="text-center">
               <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
                 50+
               </div>
-              <div className="text-muted-foreground text-sm">Marques</div>
+              <div className="text-muted-foreground text-sm">{t("hero.brands")}</div>
             </div>
           </div>
         </div>
