@@ -1,6 +1,8 @@
+import { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +11,7 @@ import {
 } from "@/components/ui/accordion";
 
 const FAQ = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const faqs = [
     {
       question: "Qu'est-ce que le Car-Pass ?",
@@ -52,6 +55,16 @@ const FAQ = () => {
     }
   ];
 
+  const filteredFaqs = useMemo(() => {
+    if (!searchQuery.trim()) return faqs;
+    const query = searchQuery.toLowerCase();
+    return faqs.filter(
+      faq => 
+        faq.question.toLowerCase().includes(query) || 
+        faq.answer.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -67,33 +80,54 @@ const FAQ = () => {
             <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
               Questions <span className="gradient-text">fréquentes</span>
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
               Trouvez rapidement les réponses à vos questions sur AutoRa, 
               le Car-Pass, les zones LEZ et bien plus encore.
             </p>
+            
+            {/* Search Bar */}
+            <div className="relative max-w-xl mx-auto">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Rechercher une question..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 py-6 text-base rounded-xl bg-card border-border"
+              />
+            </div>
           </div>
         </section>
 
         {/* FAQ Section */}
         <section className="container mx-auto px-6 pb-16">
           <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="space-y-4">
-              {faqs.map((faq, index) => (
-                <AccordionItem 
-                  key={index} 
-                  value={`item-${index}`}
-                  className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-lg transition-shadow animate-fade-up"
-                  style={{ animationDelay: `${0.05 * index}s` }}
-                >
-                  <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-5">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {filteredFaqs.length === 0 ? (
+              <div className="text-center py-12">
+                <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Aucune question ne correspond à votre recherche.
+                </p>
+              </div>
+            ) : (
+              <Accordion type="single" collapsible className="space-y-4">
+                {filteredFaqs.map((faq, index) => (
+                  <AccordionItem 
+                    key={index} 
+                    value={`item-${index}`}
+                    className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-lg transition-shadow animate-fade-up"
+                    style={{ animationDelay: `${0.05 * index}s` }}
+                  >
+                    <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground pb-5">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </section>
 
