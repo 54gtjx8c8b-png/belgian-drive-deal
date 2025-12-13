@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Heart,
@@ -20,11 +20,12 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CarCard from "@/components/CarCard";
+import CarCard, { Car } from "@/components/CarCard";
 import { Button } from "@/components/ui/button";
-import { getCarById, getRelatedCars, formatPrice, formatMileage } from "@/utils/carUtils";
+import { getCarById, getCarByIdFromDb, getRelatedCars, formatPrice, formatMileage } from "@/utils/carUtils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,9 +33,61 @@ const CarDetail = () => {
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [car, setCar] = useState<Car | null>(null);
+  const [dbListing, setDbListing] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const car = id ? getCarById(id) : null;
-  const relatedCars = id ? getRelatedCars(id, 4) : [];
+  useEffect(() => {
+    const fetchCar = async () => {
+      if (!id) {
+        setIsLoading(false);
+        return;
+      }
+
+      // First check mock cars
+      const mockCar = getCarById(id);
+      if (mockCar) {
+        setCar(mockCar);
+        setIsLoading(false);
+        return;
+      }
+
+      // Then check database
+      const dbCar = await getCarByIdFromDb(id);
+      if (dbCar) {
+        setCar(dbCar);
+        
+        // Also fetch full listing for extra details
+        const { data } = await supabase
+          .from('car_listings')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+        
+        if (data) {
+          setDbListing(data);
+        }
+      }
+      
+      setIsLoading(false);
+    };
+
+    fetchCar();
+  }, [id]);
+
+  const relatedCars = id && car ? getRelatedCars(id, 4) : [];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background dark">
+        <Header />
+        <main className="container mx-auto px-6 py-32 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!car) {
     return (
@@ -56,13 +109,15 @@ const CarDetail = () => {
     );
   }
 
-  // Mock multiple images for gallery
-  const images = [
-    car.image,
-    car.image.replace("w=800", "w=801"),
-    car.image.replace("w=800", "w=802"),
-    car.image.replace("w=800", "w=803"),
-  ];
+  // Use photos from DB listing if available, otherwise mock images
+  const images = dbListing?.photos?.length > 0 
+    ? dbListing.photos 
+    : [
+        car.image,
+        car.image.replace("w=800", "w=801"),
+        car.image.replace("w=800", "w=802"),
+        car.image.replace("w=800", "w=803"),
+      ];
 
   const handleShare = async () => {
     try {
@@ -81,6 +136,22 @@ const CarDetail = () => {
   };
 
   const handleContact = (method: string) => {
+    if (dbListing) {
+      if (method === "Email" && dbListing.contact_email) {
+        window.location.href = `mailto:${dbListing.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
+        return;
+      }
+      if (method === "Appeler" && dbListing.contact_phone) {
+        window.location.href = `tel:${dbListing.contact_phone}`;
+        return;
+      }
+      if (method === "WhatsApp" && dbListing.contact_phone) {
+        const phone = dbListing.contact_phone.replace(/\D/g, '');
+        window.open(`https://wa.me/${phone}?text=Bonjour, je suis intéressé par votre ${car.brand} ${car.model}`, '_blank');
+        return;
+      }
+    }
+    
     toast({
       title: "Contact",
       description: `Fonctionnalité "${method}" disponible en version complète`,
@@ -95,6 +166,11 @@ const CarDetail = () => {
     { icon: Leaf, label: "Norme Euro", value: car.euroNorm },
     { icon: MapPin, label: "Localisation", value: car.location },
   ];
+
+  const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
+Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
+
+  const sellerName = dbListing?.contact_name || "AutoBelgica Motors";
 
   return (
     <div className="min-h-screen bg-background dark">
@@ -125,26 +201,30 @@ const CarDetail = () => {
                   />
 
                   {/* Navigation arrows */}
-                  <button
-                    onClick={() =>
-                      setCurrentImageIndex((prev) =>
-                        prev === 0 ? images.length - 1 : prev - 1
-                      )
-                    }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setCurrentImageIndex((prev) =>
-                        prev === images.length - 1 ? 0 : prev + 1
-                      )
-                    }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
+                  {images.length > 1 && (
+                    <>
+                      <button
+                        onClick={() =>
+                          setCurrentImageIndex((prev) =>
+                            prev === 0 ? images.length - 1 : prev - 1
+                          )
+                        }
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setCurrentImageIndex((prev) =>
+                            prev === images.length - 1 ? 0 : prev + 1
+                          )
+                        }
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
 
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex gap-2">
@@ -164,25 +244,27 @@ const CarDetail = () => {
                 </div>
 
                 {/* Thumbnail strip */}
-                <div className="p-4 flex gap-3 overflow-x-auto">
-                  {images.map((img, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                        index === currentImageIndex
-                          ? "border-primary"
-                          : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt={`Vue ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
+                {images.length > 1 && (
+                  <div className="p-4 flex gap-3 overflow-x-auto">
+                    {images.map((img: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                          index === currentImageIndex
+                            ? "border-primary"
+                            : "border-transparent opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <img
+                          src={img}
+                          alt={`Vue ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Specifications */}
@@ -246,14 +328,8 @@ const CarDetail = () => {
                 <h2 className="font-display text-xl font-bold text-foreground mb-4">
                   Description
                 </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Superbe {car.brand} {car.model} de {car.year} en excellent état.
-                  Ce véhicule dispose d'une transmission {car.transmission.toLowerCase()}{" "}
-                  et fonctionne au {car.fuelType.toLowerCase()}. Avec seulement{" "}
-                  {formatMileage(car.mileage)} au compteur, cette voiture est idéale
-                  pour les trajets quotidiens comme pour les longs voyages. Norme{" "}
-                  {car.euroNorm}, compatible avec toutes les zones à faibles émissions
-                  de Belgique.
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {description}
                 </p>
               </div>
             </div>
@@ -326,9 +402,9 @@ const CarDetail = () => {
 
                 <div className="mt-6 p-4 rounded-xl bg-secondary/50 text-center">
                   <p className="text-sm text-muted-foreground">
-                    Vendeur professionnel vérifié
+                    {dbListing ? "Vendeur particulier" : "Vendeur professionnel vérifié"}
                   </p>
-                  <p className="font-semibold text-foreground">AutoBelgica Motors</p>
+                  <p className="font-semibold text-foreground">{sellerName}</p>
                 </div>
               </div>
             </div>
