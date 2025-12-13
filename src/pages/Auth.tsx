@@ -193,7 +193,7 @@ const Auth = () => {
             <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
               <Car className="w-7 h-7 text-primary" />
             </div>
-            <span className="font-display text-2xl font-bold text-foreground">AutoBelgica</span>
+            <span className="font-display text-2xl font-bold text-foreground">AutoRa</span>
           </div>
           
           <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
@@ -227,7 +227,7 @@ const Auth = () => {
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
               <Car className="w-6 h-6 text-primary" />
             </div>
-            <span className="font-display text-xl font-bold text-foreground">AutoBelgica</span>
+            <span className="font-display text-xl font-bold text-foreground">AutoRa</span>
           </div>
 
           {/* Back Button */}

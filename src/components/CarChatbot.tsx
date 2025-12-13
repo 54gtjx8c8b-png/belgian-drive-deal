@@ -17,7 +17,7 @@ const CarChatbot = () => {
     {
       role: "assistant",
       content:
-        "Bonjour ! Je suis l'assistant AutoBelgica. Je peux vous aider à trouver votre prochaine voiture, répondre à vos questions automobiles ou rechercher un véhicule par numéro de châssis (VIN). Comment puis-je vous aider ?",
+        "Bonjour ! Je suis l'assistant AutoRa. Je peux vous aider à trouver votre prochaine voiture, répondre à vos questions automobiles ou rechercher un véhicule par numéro de châssis (VIN). Comment puis-je vous aider ?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -163,7 +163,7 @@ const CarChatbot = () => {
                 <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Assistant AutoBelgica</h3>
+                <h3 className="font-semibold text-foreground">Assistant AutoRa</h3>
                 <p className="text-xs text-muted-foreground">Expert automobile IA</p>
               </div>
             </div>

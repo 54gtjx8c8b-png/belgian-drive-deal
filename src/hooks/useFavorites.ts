@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const FAVORITES_KEY = "autobelgica_favorites";
+const FAVORITES_KEY = "autora_favorites";
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
