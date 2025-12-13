@@ -12,10 +12,24 @@ import {
   Car,
   TrendingUp,
   Calendar,
-  BarChart3
+  BarChart3,
+  Pencil,
+  Trash2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { 
   AreaChart, 
   Area, 
@@ -57,6 +71,9 @@ const SellerDashboard = () => {
   const [listings, setListings] = useState<ListingStats[]>([]);
   const [totals, setTotals] = useState({ views: 0, messages: 0, favorites: 0 });
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState<ListingStats | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -241,6 +258,41 @@ const SellerDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, listing: ListingStats) => {
+    e.stopPropagation();
+    setListingToDelete(listing);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!listingToDelete) return;
+    
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("car_listings")
+        .delete()
+        .eq("id", listingToDelete.id);
+
+      if (error) throw error;
+
+      setListings(prev => prev.filter(l => l.id !== listingToDelete.id));
+      toast.success("Annonce supprimée avec succès");
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+      toast.error("Erreur lors de la suppression");
+    } finally {
+      setDeleting(false);
+      setDeleteDialogOpen(false);
+      setListingToDelete(null);
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent, listingId: string) => {
+    e.stopPropagation();
+    navigate(`/sell?edit=${listingId}`);
   };
 
   const formatPrice = (price: number) => {
@@ -572,28 +624,50 @@ const SellerDashboard = () => {
                         </div>
 
                         {/* Stats */}
-                        <div className="flex items-center gap-6">
-                          <div className="text-center">
+                        <div className="flex items-center gap-4 md:gap-6">
+                          <div className="text-center hidden sm:block">
                             <div className="flex items-center gap-1 text-blue-500">
                               <Eye className="w-4 h-4" />
                               <span className="font-semibold">{listing.views}</span>
                             </div>
                             <span className="text-xs text-muted-foreground">Vues</span>
                           </div>
-                          <div className="text-center">
+                          <div className="text-center hidden sm:block">
                             <div className="flex items-center gap-1 text-green-500">
                               <MessageCircle className="w-4 h-4" />
                               <span className="font-semibold">{listing.messages}</span>
                             </div>
                             <span className="text-xs text-muted-foreground">Messages</span>
                           </div>
-                          <div className="text-center">
+                          <div className="text-center hidden sm:block">
                             <div className="flex items-center gap-1 text-red-500">
                               <Heart className="w-4 h-4" />
                               <span className="font-semibold">{listing.favorites}</span>
                             </div>
                             <span className="text-xs text-muted-foreground">Favoris</span>
                           </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-9 w-9 rounded-lg"
+                            onClick={(e) => handleEditClick(e, listing.id)}
+                            title="Modifier"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-9 w-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={(e) => handleDeleteClick(e, listing)}
+                            title="Supprimer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -604,6 +678,34 @@ const SellerDashboard = () => {
           </div>
         </section>
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette annonce ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {listingToDelete && (
+                <>
+                  Êtes-vous sûr de vouloir supprimer l'annonce pour{" "}
+                  <strong>{listingToDelete.brand} {listingToDelete.model}</strong> ?
+                  Cette action est irréversible.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Suppression..." : "Supprimer"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

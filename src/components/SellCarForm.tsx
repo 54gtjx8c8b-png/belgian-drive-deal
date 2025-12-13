@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,11 +51,18 @@ const bodyTypes = ['Berline', 'SUV', 'Citadine', 'Break', 'Coupé', 'Cabriolet',
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
 const colors = ['Noir', 'Blanc', 'Gris', 'Bleu', 'Rouge', 'Vert', 'Beige', 'Marron', 'Orange', 'Jaune'];
 
-export function SellCarForm() {
+interface SellCarFormProps {
+  editId?: string;
+}
+
+export function SellCarForm({ editId }: SellCarFormProps) {
   const navigate = useNavigate();
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
+  const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!editId);
+  const isEditMode = !!editId;
 
   const form = useForm<SellCarFormData>({
     resolver: zodResolver(sellCarSchema),
@@ -64,6 +71,72 @@ export function SellCarForm() {
       doors: 5,
     }
   });
+
+  // Load existing listing data for edit mode
+  useEffect(() => {
+    if (!editId) return;
+
+    const fetchListing = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('car_listings')
+          .select('*')
+          .eq('id', editId)
+          .maybeSingle();
+
+        if (error || !data) {
+          toast.error("Annonce introuvable");
+          navigate('/dashboard');
+          return;
+        }
+
+        // Check ownership
+        const { data: { user } } = await supabase.auth.getUser();
+        if (data.user_id !== user?.id) {
+          toast.error("Vous n'êtes pas autorisé à modifier cette annonce");
+          navigate('/dashboard');
+          return;
+        }
+
+        // Populate form
+        form.reset({
+          brand: data.brand,
+          model: data.model,
+          year: data.year,
+          price: data.price,
+          mileage: data.mileage,
+          fuel_type: data.fuel_type,
+          transmission: data.transmission,
+          body_type: data.body_type,
+          color: data.color,
+          power: data.power || undefined,
+          doors: data.doors || 5,
+          euro_norm: data.euro_norm || undefined,
+          vin: data.vin || undefined,
+          first_registration: data.first_registration || undefined,
+          description: data.description || undefined,
+          contact_name: data.contact_name,
+          contact_phone: data.contact_phone || undefined,
+          contact_email: data.contact_email,
+          location: data.location || undefined,
+        });
+
+        // Set existing photos
+        if (data.photos && data.photos.length > 0) {
+          setExistingPhotos(data.photos);
+          setPhotosPreviews(data.photos);
+        }
+      } catch (error) {
+        console.error("Error fetching listing:", error);
+        toast.error("Erreur lors du chargement de l'annonce");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchListing();
+  }, [editId, form, navigate]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -129,57 +202,101 @@ export function SellCarForm() {
         return;
       }
 
-      if (photos.length === 0) {
+      // Check if we have photos (new or existing)
+      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      if (!hasPhotos) {
         toast.error("Ajoutez au moins une photo de votre véhicule");
         setIsSubmitting(false);
         return;
       }
 
-      // Upload photos
-      const photoUrls = await uploadPhotos(user.id);
-      
-      if (photoUrls.length === 0) {
+      // Upload new photos if any
+      let allPhotoUrls = [...existingPhotos];
+      if (photos.length > 0) {
+        const newPhotoUrls = await uploadPhotos(user.id);
+        allPhotoUrls = [...allPhotoUrls, ...newPhotoUrls];
+      }
+
+      if (allPhotoUrls.length === 0) {
         toast.error("Erreur lors de l'upload des photos");
         setIsSubmitting(false);
         return;
       }
 
-      // Insert listing
-      const { error } = await supabase
-        .from('car_listings')
-        .insert({
-          user_id: user.id,
-          brand: data.brand,
-          model: data.model,
-          year: data.year,
-          price: data.price,
-          mileage: data.mileage,
-          fuel_type: data.fuel_type,
-          transmission: data.transmission,
-          body_type: data.body_type,
-          color: data.color,
-          power: data.power || null,
-          doors: data.doors || 5,
-          euro_norm: data.euro_norm || null,
-          vin: data.vin || null,
-          first_registration: data.first_registration || null,
-          description: data.description || null,
-          contact_name: data.contact_name,
-          contact_phone: data.contact_phone || null,
-          contact_email: data.contact_email,
-          location: data.location || null,
-          photos: photoUrls,
-          status: 'pending'
-        });
+      if (isEditMode && editId) {
+        // Update existing listing
+        const { error } = await supabase
+          .from('car_listings')
+          .update({
+            brand: data.brand,
+            model: data.model,
+            year: data.year,
+            price: data.price,
+            mileage: data.mileage,
+            fuel_type: data.fuel_type,
+            transmission: data.transmission,
+            body_type: data.body_type,
+            color: data.color,
+            power: data.power || null,
+            doors: data.doors || 5,
+            euro_norm: data.euro_norm || null,
+            vin: data.vin || null,
+            first_registration: data.first_registration || null,
+            description: data.description || null,
+            contact_name: data.contact_name,
+            contact_phone: data.contact_phone || null,
+            contact_email: data.contact_email,
+            location: data.location || null,
+            photos: allPhotoUrls,
+          })
+          .eq('id', editId);
 
-      if (error) {
-        console.error('Insert error:', error);
-        toast.error("Erreur lors de la création de l'annonce");
-        return;
+        if (error) {
+          console.error('Update error:', error);
+          toast.error("Erreur lors de la modification de l'annonce");
+          return;
+        }
+
+        toast.success("Votre annonce a été modifiée avec succès!");
+        navigate('/dashboard');
+      } else {
+        // Insert new listing
+        const { error } = await supabase
+          .from('car_listings')
+          .insert({
+            user_id: user.id,
+            brand: data.brand,
+            model: data.model,
+            year: data.year,
+            price: data.price,
+            mileage: data.mileage,
+            fuel_type: data.fuel_type,
+            transmission: data.transmission,
+            body_type: data.body_type,
+            color: data.color,
+            power: data.power || null,
+            doors: data.doors || 5,
+            euro_norm: data.euro_norm || null,
+            vin: data.vin || null,
+            first_registration: data.first_registration || null,
+            description: data.description || null,
+            contact_name: data.contact_name,
+            contact_phone: data.contact_phone || null,
+            contact_email: data.contact_email,
+            location: data.location || null,
+            photos: allPhotoUrls,
+            status: 'pending'
+          });
+
+        if (error) {
+          console.error('Insert error:', error);
+          toast.error("Erreur lors de la création de l'annonce");
+          return;
+        }
+
+        toast.success("Votre annonce a été soumise avec succès!");
+        navigate('/');
       }
-
-      toast.success("Votre annonce a été soumise avec succès!");
-      navigate('/');
       
     } catch (error) {
       console.error('Submit error:', error);
@@ -188,6 +305,22 @@ export function SellCarForm() {
       setIsSubmitting(false);
     }
   };
+
+  const removeExistingPhoto = (index: number) => {
+    const photoUrl = photosPreviews[index];
+    if (existingPhotos.includes(photoUrl)) {
+      setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
+    }
+    setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
@@ -207,7 +340,14 @@ export function SellCarForm() {
                   <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
                   <button
                     type="button"
-                    onClick={() => removePhoto(index)}
+                    onClick={() => {
+                      const photoUrl = photosPreviews[index];
+                      if (existingPhotos.includes(photoUrl)) {
+                        removeExistingPhoto(index);
+                      } else {
+                        removePhoto(index);
+                      }
+                    }}
                     className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X className="h-4 w-4" />
@@ -629,11 +769,13 @@ export function SellCarForm() {
 
         {/* Submit */}
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate('/')}>
+          <Button type="button" variant="outline" onClick={() => navigate(isEditMode ? '/dashboard' : '/')}>
             Annuler
           </Button>
           <Button type="submit" disabled={isSubmitting} className="min-w-[200px]">
-            {isSubmitting ? "Publication en cours..." : "Publier l'annonce"}
+            {isSubmitting 
+              ? (isEditMode ? "Modification en cours..." : "Publication en cours...") 
+              : (isEditMode ? "Enregistrer les modifications" : "Publier l'annonce")}
           </Button>
         </div>
       </form>
