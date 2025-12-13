@@ -1,4 +1,4 @@
-import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, ChevronDown, Globe } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -8,6 +8,13 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCompareContext } from "@/contexts/CompareContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,6 +57,27 @@ const Header = () => {
     });
   };
 
+  const NavLink = ({ to, children, badge }: { to: string; children: React.ReactNode; badge?: number }) => (
+    <Link 
+      to={to} 
+      className={`relative font-medium transition-colors ${
+        location.pathname === to 
+          ? "text-primary" 
+          : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+      {location.pathname === to && (
+        <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+      )}
+      {badge !== undefined && badge > 0 && (
+        <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1">
+          {badge > 9 ? '9+' : badge}
+        </span>
+      )}
+    </Link>
+  );
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -76,136 +104,79 @@ const Header = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link 
-              to="/" 
-              className={`relative font-medium transition-colors ${
-                location.pathname === "/" 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Acheter
-              {location.pathname === "/" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-            </Link>
-            <Link 
-              to="/sell" 
-              className={`relative font-medium transition-colors ${
-                location.pathname === "/sell" 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Vendre
-              {location.pathname === "/sell" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-            </Link>
-            <Link 
-              to="/favorites" 
-              className={`relative font-medium flex items-center gap-1 transition-colors ${
-                location.pathname === "/favorites" 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Heart className="w-4 h-4" />
-              Favoris
-              {location.pathname === "/favorites" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-            </Link>
-            <Link 
-              to="/compare" 
-              className={`relative font-medium flex items-center gap-1 transition-colors ${
-                location.pathname === "/compare" 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <GitCompareArrows className="w-4 h-4" />
-              Comparer
-              {location.pathname === "/compare" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-              {compareCount > 0 && (
-                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1">
-                  {compareCount}
-                </span>
-              )}
-            </Link>
-            <Link 
-              to="/faq" 
-              className={`relative font-medium flex items-center gap-1 transition-colors ${
-                location.pathname === "/faq" 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <HelpCircle className="w-4 h-4" />
-              FAQ
-              {location.pathname === "/faq" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-            </Link>
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden md:flex items-center gap-6">
+            <NavLink to="/">Acheter</NavLink>
+            <NavLink to="/sell">Vendre</NavLink>
+            <NavLink to="/favorites">
+              <span className="flex items-center gap-1.5">
+                <Heart className="w-4 h-4" />
+                Favoris
+              </span>
+            </NavLink>
+            <NavLink to="/compare" badge={compareCount}>
+              <span className="flex items-center gap-1.5">
+                <GitCompareArrows className="w-4 h-4" />
+                Comparer
+              </span>
+            </NavLink>
             {user && (
-              <Link 
-                to="/messages" 
-                className={`relative font-medium flex items-center gap-1 transition-colors ${
-                  location.pathname === "/messages" 
-                    ? "text-primary" 
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <MessageCircle className="w-4 h-4" />
-                Messages
-                {location.pathname === "/messages" && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
-                )}
-                {hasUnread && (
-                  <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </Link>
+              <NavLink to="/messages" badge={hasUnread ? unreadCount : undefined}>
+                <span className="flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4" />
+                  Messages
+                </span>
+              </NavLink>
             )}
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <button className="hover:text-foreground transition-colors font-medium">FR</button>
-              <span>/</span>
-              <button className="hover:text-foreground transition-colors">NL</button>
-              <span>/</span>
-              <button className="hover:text-foreground transition-colors">EN</button>
-            </div>
-            {user ? (
-              <div className="flex items-center gap-3">
-                <Link 
-                  to="/dashboard" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                <Link 
-                  to="/settings" 
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-                >
-                  <Settings className="w-4 h-4" />
-                </Link>
-                <span className="text-sm text-muted-foreground">
-                  {user.email?.split("@")[0]}
-                </span>
-                <Button variant="outline" size="sm" className="rounded-xl" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Déconnexion
+          {/* Desktop Actions - Right side */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+                  <Globe className="w-4 h-4" />
+                  FR
+                  <ChevronDown className="w-3 h-3" />
                 </Button>
-              </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[100px]">
+                <DropdownMenuItem className="font-medium">Français</DropdownMenuItem>
+                <DropdownMenuItem>Nederlands</DropdownMenuItem>
+                <DropdownMenuItem>English</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-xl gap-2">
+                    <User className="w-4 h-4" />
+                    {user.email?.split("@")[0]}
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Paramètres
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/faq")} className="cursor-pointer">
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    FAQ
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate("/auth")}>
                 <User className="w-4 h-4 mr-2" />
@@ -226,7 +197,7 @@ const Header = () => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-border animate-fade-up">
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-3">
               <Link to="/" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Acheter</Link>
               <Link to="/sell" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Vendre</Link>
               <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
@@ -247,7 +218,7 @@ const Header = () => {
                 FAQ
               </Link>
               {user && (
-                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2 relative" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <MessageCircle className="w-4 h-4" />
                   Messages
                   {hasUnread && (
@@ -257,11 +228,9 @@ const Header = () => {
                   )}
                 </Link>
               )}
-              <div className="flex items-center gap-4 py-2">
-                <button className="text-foreground font-medium">FR</button>
-                <button className="text-muted-foreground">NL</button>
-                <button className="text-muted-foreground">EN</button>
-              </div>
+              
+              <div className="h-px bg-border my-2" />
+              
               {user ? (
                 <>
                   <Link to="/dashboard" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
@@ -272,13 +241,13 @@ const Header = () => {
                     <Settings className="w-4 h-4" />
                     Paramètres
                   </Link>
-                  <Button className="w-full rounded-xl" onClick={handleLogout}>
+                  <Button variant="outline" className="w-full rounded-xl mt-2" onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Déconnexion
                   </Button>
                 </>
               ) : (
-                <Button className="w-full rounded-xl" onClick={() => navigate("/auth")}>
+                <Button className="w-full rounded-xl mt-2" onClick={() => navigate("/auth")}>
                   <User className="w-4 h-4 mr-2" />
                   Connexion
                 </Button>
