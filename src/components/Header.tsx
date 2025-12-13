@@ -1,4 +1,5 @@
-import { Car, Menu, User, LogOut, Heart, MessageCircle } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle } from "lucide-react";
+import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -41,10 +42,12 @@ const Header = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <Car className="w-5 h-5 text-primary-foreground" />
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <img 
+              src={autoraLogo} 
+              alt="AutoRa Logo" 
+              className="w-10 h-10 rounded-xl object-cover transition-transform group-hover:scale-105"
+            />
             <span className="font-display text-xl font-bold text-foreground">
               Auto<span className="gradient-text">Ra</span>
             </span>
