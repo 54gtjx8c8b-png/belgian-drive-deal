@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
 import Favorites from "./pages/Favorites";
 import SellCar from "./pages/SellCar";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/car/:id" element={<CarDetail />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/sell" element={<SellCar />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

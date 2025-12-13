@@ -135,7 +135,7 @@ const CarDetail = () => {
     }
   };
 
-  const handleContact = (method: string) => {
+  const handleContact = async (method: string) => {
     if (dbListing) {
       if (method === "Email" && dbListing.contact_email) {
         window.location.href = `mailto:${dbListing.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
@@ -150,12 +150,92 @@ const CarDetail = () => {
         window.open(`https://wa.me/${phone}?text=Bonjour, je suis intéressé par votre ${car.brand} ${car.model}`, '_blank');
         return;
       }
+      if (method === "Message") {
+        await startConversation();
+        return;
+      }
     }
     
     toast({
       title: "Contact",
       description: `Fonctionnalité "${method}" disponible en version complète`,
     });
+  };
+
+  const startConversation = async () => {
+    if (!dbListing) {
+      toast({
+        title: "Indisponible",
+        description: "La messagerie n'est disponible que pour les annonces de particuliers",
+      });
+      return;
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: "Connexion requise",
+        description: "Connectez-vous pour envoyer un message",
+      });
+      navigate('/auth');
+      return;
+    }
+
+    const currentUserId = session.user.id;
+
+    // Can't message yourself
+    if (currentUserId === dbListing.user_id) {
+      toast({
+        title: "Action impossible",
+        description: "Vous ne pouvez pas vous envoyer un message",
+      });
+      return;
+    }
+
+    try {
+      // Check if conversation already exists
+      const { data: existingConvo } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('car_listing_id', dbListing.id)
+        .eq('buyer_id', currentUserId)
+        .eq('seller_id', dbListing.user_id)
+        .maybeSingle();
+
+      if (existingConvo) {
+        navigate('/messages');
+        return;
+      }
+
+      // Create new conversation
+      const { error } = await supabase
+        .from('conversations')
+        .insert({
+          car_listing_id: dbListing.id,
+          buyer_id: currentUserId,
+          seller_id: dbListing.user_id,
+          car_brand: car.brand,
+          car_model: car.model,
+          car_image: car.image
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Conversation créée",
+        description: "Vous pouvez maintenant envoyer un message",
+      });
+      
+      navigate('/messages');
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la conversation",
+        variant: "destructive",
+      });
+    }
   };
 
   const specs = [
@@ -375,9 +455,19 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 </div>
 
                 <div className="space-y-3">
+                  {dbListing && (
+                    <Button
+                      onClick={() => handleContact("Message")}
+                      className="w-full h-12 btn-primary-gradient"
+                    >
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Envoyer un message
+                    </Button>
+                  )}
                   <Button
                     onClick={() => handleContact("Appeler")}
-                    className="w-full h-12 btn-primary-gradient"
+                    variant={dbListing ? "outline" : "default"}
+                    className={`w-full h-12 ${!dbListing ? 'btn-primary-gradient' : ''}`}
                   >
                     <Phone className="w-5 h-5 mr-2" />
                     Appeler le vendeur

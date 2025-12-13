@@ -104,6 +104,85 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          buyer_id: string
+          car_brand: string | null
+          car_image: string | null
+          car_listing_id: string | null
+          car_model: string | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          car_brand?: string | null
+          car_image?: string | null
+          car_listing_id?: string | null
+          car_model?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          car_brand?: string | null
+          car_image?: string | null
+          car_listing_id?: string | null
+          car_model?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

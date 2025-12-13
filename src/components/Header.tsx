@@ -1,4 +1,4 @@
-import { Car, Menu, User, LogOut, Heart } from "lucide-react";
+import { Car, Menu, User, LogOut, Heart, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,6 +61,12 @@ const Header = () => {
               <Heart className="w-4 h-4" />
               Favoris
             </Link>
+            {user && (
+              <Link to="/messages" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1">
+                <MessageCircle className="w-4 h-4" />
+                Messages
+              </Link>
+            )}
           </nav>
 
           {/* Desktop Actions */}
@@ -109,6 +115,12 @@ const Header = () => {
                 <Heart className="w-4 h-4" />
                 Favoris
               </Link>
+              {user && (
+                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                  <MessageCircle className="w-4 h-4" />
+                  Messages
+                </Link>
+              )}
               <div className="flex items-center gap-4 py-2">
                 <button className="text-foreground font-medium">FR</button>
                 <button className="text-muted-foreground">NL</button>
