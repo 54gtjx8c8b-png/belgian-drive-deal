@@ -6,6 +6,7 @@ import PopularCars from "@/components/PopularCars";
 import FiltersSidebar from "@/components/FiltersSidebar";
 import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
+import CarChatbot from "@/components/CarChatbot";
 import { mockCars } from "@/data/mockCars";
 import { useCarFilters } from "@/hooks/useCarFilters";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -105,6 +106,7 @@ const Index = () => {
         </section>
       </main>
       <Footer />
+      <CarChatbot />
     </div>
   );
 };
