@@ -104,6 +104,38 @@ export type Database = {
         }
         Relationships: []
       }
+      car_views: {
+        Row: {
+          car_listing_id: string
+          id: string
+          ip_hash: string | null
+          viewed_at: string
+          viewer_id: string | null
+        }
+        Insert: {
+          car_listing_id: string
+          id?: string
+          ip_hash?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          car_listing_id?: string
+          id?: string
+          ip_hash?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_views_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -141,6 +173,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "conversations_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          car_listing_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          car_listing_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          car_listing_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_car_listing_id_fkey"
             columns: ["car_listing_id"]
             isOneToOne: false
             referencedRelation: "car_listings"

@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { getCarById, getCarByIdFromDb, getRelatedCars, formatPrice, formatMileage } from "@/utils/carUtils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
+import { useTrackView } from "@/hooks/useTrackView";
 import { supabase } from "@/integrations/supabase/client";
 
 const CarDetail = () => {
@@ -36,6 +37,9 @@ const CarDetail = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [dbListing, setDbListing] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Track view when page loads
+  useTrackView(id);
 
   useEffect(() => {
     const fetchCar = async () => {
