@@ -1,5 +1,4 @@
 import { Car } from "@/components/CarCard";
-import { mockCars } from "@/data/mockCars";
 import { supabase } from "@/integrations/supabase/client";
 
 // Map database listing to Car interface
@@ -24,37 +23,32 @@ const mapListingToCar = (listing: any): Car => {
   };
 };
 
-// Extract unique brands from the car data
+// Common car brands for Belgium
+const commonBrands = [
+  "Audi", "BMW", "Citroën", "Dacia", "Fiat", "Ford", "Honda", "Hyundai",
+  "Kia", "Mazda", "Mercedes-Benz", "Nissan", "Opel", "Peugeot", "Porsche",
+  "Renault", "Seat", "Skoda", "Tesla", "Toyota", "Volkswagen", "Volvo"
+];
+
+// Extract unique brands
 export const getAllBrands = (): string[] => {
-  const brands = new Set(mockCars.map((car) => car.brand));
-  return Array.from(brands).sort();
+  return commonBrands;
 };
 
 // Get price range
 export const getPriceRange = (): { min: number; max: number } => {
-  const prices = mockCars.map((car) => car.price);
-  return {
-    min: Math.min(...prices),
-    max: Math.max(...prices),
-  };
+  return { min: 5000, max: 150000 };
 };
 
 // Get year range
 export const getYearRange = (): { min: number; max: number } => {
-  const years = mockCars.map((car) => car.year);
-  return {
-    min: Math.min(...years),
-    max: Math.max(...years),
-  };
+  const currentYear = new Date().getFullYear();
+  return { min: 2010, max: currentYear };
 };
 
 // Get mileage range
 export const getMileageRange = (): { min: number; max: number } => {
-  const mileages = mockCars.map((car) => car.mileage);
-  return {
-    min: Math.min(...mileages),
-    max: Math.max(...mileages),
-  };
+  return { min: 0, max: 300000 };
 };
 
 // Format price for display
@@ -69,11 +63,6 @@ export const formatPrice = (price: number): string => {
 // Format mileage for display
 export const formatMileage = (km: number): string => {
   return new Intl.NumberFormat("fr-BE").format(km) + " km";
-};
-
-// Get car by ID (checks both mock and database)
-export const getCarById = (id: string) => {
-  return mockCars.find((car) => car.id === id);
 };
 
 // Get car by ID from database
@@ -93,19 +82,6 @@ export const getCarByIdFromDb = async (id: string): Promise<Car | null> => {
   } catch {
     return null;
   }
-};
-
-// Get related cars (same brand or fuel type)
-export const getRelatedCars = (carId: string, limit: number = 4) => {
-  const car = getCarById(carId);
-  if (!car) return [];
-
-  return mockCars
-    .filter(
-      (c) =>
-        c.id !== carId && (c.brand === car.brand || c.fuelType === car.fuelType)
-    )
-    .slice(0, limit);
 };
 
 // Get related cars from a provided list
