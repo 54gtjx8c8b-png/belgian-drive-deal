@@ -3,7 +3,13 @@ import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import CarCard from "./CarCard";
 import { popularCars } from "@/data/mockCars";
 
-const PopularCars = () => {
+interface PopularCarsProps {
+  isFavorite: (carId: string) => boolean;
+  onToggleFavorite: (carId: string) => void;
+  onCarClick: (carId: string) => void;
+}
+
+const PopularCars = ({ isFavorite, onToggleFavorite, onCarClick }: PopularCarsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -66,20 +72,13 @@ const PopularCars = () => {
               key={car.id}
               className="flex-shrink-0 w-[320px] md:w-[350px] snap-start"
             >
-              <CarCard car={car} />
+              <CarCard
+                car={car}
+                isFavorite={isFavorite(car.id)}
+                onToggleFavorite={onToggleFavorite}
+                onClick={onCarClick}
+              />
             </div>
-          ))}
-        </div>
-
-        {/* Mobile Navigation Dots */}
-        <div className="flex md:hidden justify-center gap-2 mt-6">
-          {popularCars.slice(0, 4).map((_, index) => (
-            <div
-              key={index}
-              className={`w-2 h-2 rounded-full ${
-                index === 0 ? "bg-primary" : "bg-secondary"
-              }`}
-            />
           ))}
         </div>
       </div>

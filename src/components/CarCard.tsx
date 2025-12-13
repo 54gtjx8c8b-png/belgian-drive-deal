@@ -1,4 +1,4 @@
-import { Fuel, Calendar, Gauge, Shield, MapPin } from "lucide-react";
+import { Fuel, Calendar, Gauge, Shield, MapPin, Heart } from "lucide-react";
 
 export interface Car {
   id: string;
@@ -18,23 +18,42 @@ export interface Car {
 
 interface CarCardProps {
   car: Car;
+  isFavorite?: boolean;
+  onToggleFavorite?: (carId: string) => void;
+  onClick?: (carId: string) => void;
 }
 
-const CarCard = ({ car }: CarCardProps) => {
+const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCardProps) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fr-BE', {
-      style: 'currency',
-      currency: 'EUR',
+    return new Intl.NumberFormat("fr-BE", {
+      style: "currency",
+      currency: "EUR",
       maximumFractionDigits: 0,
     }).format(price);
   };
 
   const formatMileage = (km: number) => {
-    return new Intl.NumberFormat('fr-BE').format(km) + ' km';
+    return new Intl.NumberFormat("fr-BE").format(km) + " km";
+  };
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(car.id);
+    }
+  };
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(car.id);
+    }
   };
 
   return (
-    <article className="glass-card overflow-hidden group cursor-pointer">
+    <article
+      className="glass-card overflow-hidden group cursor-pointer"
+      onClick={handleClick}
+    >
       {/* Image Container */}
       <div className="relative h-48 md:h-56 overflow-hidden">
         <img
@@ -42,7 +61,19 @@ const CarCard = ({ car }: CarCardProps) => {
           alt={`${car.brand} ${car.model} ${car.year}`}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
+
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavoriteClick}
+          className={`absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+            isFavorite
+              ? "bg-red-500 text-white"
+              : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-red-500"
+          }`}
+        >
+          <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+        </button>
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {car.isLezCompatible && (
