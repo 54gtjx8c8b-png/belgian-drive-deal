@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,6 +9,8 @@ import { Car, Shield, Clock, CheckCircle } from 'lucide-react';
 
 export default function SellCar() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -43,10 +45,12 @@ export default function SellCar() {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Vendez votre voiture
+              {editId ? 'Modifier votre annonce' : 'Vendez votre voiture'}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Publiez votre annonce en quelques minutes et touchez des milliers d'acheteurs en Belgique
+              {editId 
+                ? 'Mettez à jour les informations de votre véhicule'
+                : 'Publiez votre annonce en quelques minutes et touchez des milliers d\'acheteurs en Belgique'}
             </p>
           </div>
 
@@ -85,7 +89,7 @@ export default function SellCar() {
           ) : (
             /* Sell Form */
             <div className="max-w-4xl mx-auto">
-              <SellCarForm />
+              <SellCarForm editId={editId || undefined} />
             </div>
           )}
         </div>
