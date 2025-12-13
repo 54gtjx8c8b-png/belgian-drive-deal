@@ -60,6 +60,11 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <a href="/faq" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  FAQ
+                </a>
+              </li>
+              <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
                   Car-Pass Belgique
                 </a>
