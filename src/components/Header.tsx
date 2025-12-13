@@ -1,4 +1,4 @@
-import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -185,6 +185,13 @@ const Header = () => {
             </div>
             {user ? (
               <div className="flex items-center gap-3">
+                <Link 
+                  to="/dashboard" 
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
                 <span className="text-sm text-muted-foreground">
                   {user.email?.split("@")[0]}
                 </span>
@@ -250,10 +257,16 @@ const Header = () => {
                 <button className="text-muted-foreground">EN</button>
               </div>
               {user ? (
-                <Button className="w-full rounded-xl" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Déconnexion
-                </Button>
+                <>
+                  <Link to="/dashboard" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <Button className="w-full rounded-xl" onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Déconnexion
+                  </Button>
+                </>
               ) : (
                 <Button className="w-full rounded-xl" onClick={() => navigate("/auth")}>
                   <User className="w-4 h-4 mr-2" />
