@@ -5,11 +5,8 @@ import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { z } from "zod";
-
-const emailSchema = z.string().email("Adresse email invalide");
-const passwordSchema = z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères");
-const nameSchema = z.string().min(2, "Le nom doit contenir au moins 2 caractères");
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,6 +19,11 @@ const Auth = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const emailSchema = z.string().email(t("auth.invalidEmail"));
+  const passwordSchema = z.string().min(6, t("auth.passwordMin"));
+  const nameSchema = z.string().min(2, t("auth.nameMin"));
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -91,21 +93,21 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("Invalid login credentials")) {
             toast({
-              title: "Erreur de connexion",
-              description: "Email ou mot de passe incorrect",
+              title: t("auth.errorLogin"),
+              description: t("auth.errorCredentials"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur",
+              title: t("auth.error"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Bienvenue !",
-            description: "Connexion réussie",
+            title: t("auth.welcome"),
+            description: t("auth.loginSuccess"),
           });
         }
       } else {
@@ -123,28 +125,28 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("User already registered")) {
             toast({
-              title: "Compte existant",
-              description: "Un compte existe déjà avec cette adresse email",
+              title: t("auth.accountExists"),
+              description: t("auth.accountExistsDesc"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Erreur",
+              title: t("auth.error"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Compte créé !",
-            description: "Votre compte a été créé avec succès",
+            title: t("auth.accountCreated"),
+            description: t("auth.accountCreatedDesc"),
           });
         }
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite",
+        title: t("auth.error"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -164,15 +166,15 @@ const Auth = () => {
 
       if (error) {
         toast({
-          title: "Erreur",
+          title: t("auth.error"),
           description: error.message,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite",
+        title: t("auth.error"),
+        description: t("auth.unexpectedError"),
         variant: "destructive",
       });
     } finally {
@@ -186,7 +188,7 @@ const Auth = () => {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary" />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "-3s" }} />
         
         <div className="relative z-10 flex flex-col justify-center p-12">
           <div className="flex items-center gap-3 mb-8">
@@ -197,19 +199,19 @@ const Auth = () => {
           </div>
           
           <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Trouvez votre
+            {t("hero.title1")}
             <br />
-            <span className="gradient-text">voiture idéale</span>
+            <span className="gradient-text">{t("auth.findIdealCar")}</span>
           </h1>
           
           <p className="text-lg text-muted-foreground max-w-md">
-            Des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie sur le marché belge.
+            {t("auth.heroDesc")}
           </p>
           
           <div className="flex gap-8 mt-12">
             <div className="text-center">
               <div className="font-display text-3xl font-bold text-foreground">15K+</div>
-              <div className="text-muted-foreground text-sm">Véhicules</div>
+              <div className="text-muted-foreground text-sm">{t("hero.vehicles")}</div>
             </div>
             <div className="text-center">
               <div className="font-display text-3xl font-bold text-foreground">98%</div>
@@ -236,18 +238,16 @@ const Auth = () => {
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour à l'accueil
+            {t("auth.backHome")}
           </button>
 
           {/* Form Card */}
           <div className="glass-panel p-8">
             <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-              {isLogin ? "Connexion" : "Créer un compte"}
+              {isLogin ? t("auth.login") : t("auth.signup")}
             </h2>
             <p className="text-muted-foreground mb-8">
-              {isLogin
-                ? "Connectez-vous pour accéder à votre espace"
-                : "Inscrivez-vous pour commencer"}
+              {isLogin ? t("auth.loginSubtitle") : t("auth.signupSubtitle")}
             </p>
 
             {/* Google Button */}
@@ -276,13 +276,13 @@ const Auth = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Continuer avec Google
+              {t("auth.continueGoogle")}
             </Button>
 
             {/* Divider */}
             <div className="flex items-center gap-4 mb-6">
               <div className="flex-1 h-px bg-border/50" />
-              <span className="text-muted-foreground text-sm">ou</span>
+              <span className="text-muted-foreground text-sm">{t("auth.or")}</span>
               <div className="flex-1 h-px bg-border/50" />
             </div>
 
@@ -294,7 +294,7 @@ const Auth = () => {
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                       type="text"
-                      placeholder="Nom complet"
+                      placeholder={t("auth.fullName")}
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
@@ -311,7 +311,7 @@ const Auth = () => {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="Adresse email"
+                    placeholder={t("auth.email")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
@@ -327,7 +327,7 @@ const Auth = () => {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Mot de passe"
+                    placeholder={t("auth.password")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
@@ -350,13 +350,13 @@ const Auth = () => {
                 className="w-full h-12 btn-primary-gradient"
                 disabled={loading}
               >
-                {loading ? "Chargement..." : isLogin ? "Se connecter" : "S'inscrire"}
+                {loading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
               </Button>
             </form>
 
             {/* Toggle Login/Signup */}
             <p className="text-center text-muted-foreground mt-6">
-              {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
+              {isLogin ? t("auth.noAccount") : t("auth.hasAccount")}
               <button
                 type="button"
                 onClick={() => {
@@ -365,7 +365,7 @@ const Auth = () => {
                 }}
                 className="ml-2 text-primary hover:underline font-medium"
               >
-                {isLogin ? "S'inscrire" : "Se connecter"}
+                {isLogin ? t("auth.submitSignup") : t("auth.submit")}
               </button>
             </p>
           </div>
