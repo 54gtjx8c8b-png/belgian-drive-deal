@@ -2,7 +2,7 @@ import { Menu, User, LogOut, Heart, MessageCircle } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ const Header = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
 
@@ -75,20 +76,60 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+            <Link 
+              to="/" 
+              className={`relative font-medium transition-colors ${
+                location.pathname === "/" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
               Acheter
+              {location.pathname === "/" && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+              )}
             </Link>
-            <Link to="/sell" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+            <Link 
+              to="/sell" 
+              className={`relative font-medium transition-colors ${
+                location.pathname === "/sell" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
               Vendre
+              {location.pathname === "/sell" && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+              )}
             </Link>
-            <Link to="/favorites" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1">
+            <Link 
+              to="/favorites" 
+              className={`relative font-medium flex items-center gap-1 transition-colors ${
+                location.pathname === "/favorites" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
               <Heart className="w-4 h-4" />
               Favoris
+              {location.pathname === "/favorites" && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+              )}
             </Link>
             {user && (
-              <Link to="/messages" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1 relative">
+              <Link 
+                to="/messages" 
+                className={`relative font-medium flex items-center gap-1 transition-colors ${
+                  location.pathname === "/messages" 
+                    ? "text-primary" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
                 <MessageCircle className="w-4 h-4" />
                 Messages
+                {location.pathname === "/messages" && (
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                )}
                 {hasUnread && (
                   <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1">
                     {unreadCount > 9 ? '9+' : unreadCount}
