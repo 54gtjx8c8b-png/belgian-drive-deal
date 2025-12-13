@@ -9,7 +9,7 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange={false}>
         <App />
       </ThemeProvider>
     </React.StrictMode>
