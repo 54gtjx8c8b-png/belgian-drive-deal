@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { HelpCircle, Search } from "lucide-react";
@@ -12,6 +12,7 @@ import {
 
 const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  
   const faqs = [
     {
       question: "Qu'est-ce que le Car-Pass ?",
@@ -54,6 +55,24 @@ const FAQ = () => {
       answer: "Nous travaillons avec des partenaires financiers pour vous proposer des solutions de crédit adaptées. Contactez-nous pour plus d'informations sur les options de financement disponibles."
     }
   ];
+
+  // Function to highlight matching text
+  const highlightText = useCallback((text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <mark key={index} className="bg-primary/30 text-foreground rounded px-0.5">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  }, []);
 
   const filteredFaqs = useMemo(() => {
     if (!searchQuery.trim()) return faqs;
@@ -119,10 +138,10 @@ const FAQ = () => {
                     style={{ animationDelay: `${0.05 * index}s` }}
                   >
                     <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
-                      {faq.question}
+                      {highlightText(faq.question, searchQuery)}
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground pb-5">
-                      {faq.answer}
+                      {highlightText(faq.answer, searchQuery)}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
