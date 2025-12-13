@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { HelpCircle, Search, X, User, ShoppingCart, Car, Shield, CreditCard } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Accordion,
@@ -242,7 +243,12 @@ const FAQ = () => {
                     style={{ animationDelay: `${0.05 * index}s` }}
                   >
                     <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
-                      {highlightText(faq.question, searchQuery)}
+                      <div className="flex items-start gap-3 w-full pr-4">
+                        <span className="flex-1">{highlightText(faq.question, searchQuery)}</span>
+                        <Badge variant="secondary" className="shrink-0 text-xs">
+                          {categories.find(c => c.id === faq.category)?.label}
+                        </Badge>
+                      </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground pb-5">
                       {highlightText(faq.answer, searchQuery)}
