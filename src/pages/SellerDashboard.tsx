@@ -14,7 +14,8 @@ import {
   Calendar,
   BarChart3,
   Pencil,
-  Trash2
+  Trash2,
+  Download
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -352,6 +353,52 @@ const SellerDashboard = () => {
     );
   };
 
+  const exportToCSV = () => {
+    // Headers
+    const headers = ["Véhicule", "Statut", "Prix", "Date de création", "Vues", "Messages", "Favoris"];
+    
+    // Rows
+    const rows = listings.map(listing => [
+      `${listing.brand} ${listing.model} ${listing.year}`,
+      listing.status === "approved" ? "Publiée" : listing.status === "pending" ? "En attente" : "Refusée",
+      listing.price,
+      formatDate(listing.created_at),
+      listing.views,
+      listing.messages,
+      listing.favorites
+    ]);
+    
+    // Add totals row
+    rows.push([
+      "TOTAL",
+      "",
+      "",
+      "",
+      totals.views,
+      totals.messages,
+      totals.favorites
+    ]);
+    
+    // Create CSV content
+    const csvContent = [
+      headers.join(";"),
+      ...rows.map(row => row.join(";"))
+    ].join("\n");
+    
+    // Create blob and download
+    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `statistiques-autora-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success("Export CSV téléchargé");
+  };
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -376,17 +423,28 @@ const SellerDashboard = () => {
         <section className="container mx-auto px-6 py-12">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <LayoutDashboard className="w-4 h-4" />
-                Espace vendeur
+            <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Espace vendeur
+                </div>
+                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                  Tableau de <span className="gradient-text">bord</span>
+                </h1>
+                <p className="text-muted-foreground mt-2">
+                  Suivez les performances de vos annonces
+                </p>
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                Tableau de <span className="gradient-text">bord</span>
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Suivez les performances de vos annonces
-              </p>
+              <Button
+                onClick={exportToCSV}
+                variant="outline"
+                className="gap-2"
+                disabled={loading || listings.length === 0}
+              >
+                <Download className="w-4 h-4" />
+                Exporter CSV
+              </Button>
             </div>
 
             {/* Stats Overview */}
