@@ -14,7 +14,7 @@ const Favorites = () => {
   const favoriteCars = mockCars.filter((car) => favorites.includes(car.id));
 
   return (
-    <div className="min-h-screen bg-background dark">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-6 pt-32 pb-20">
         <div className="flex items-center justify-between mb-8">
