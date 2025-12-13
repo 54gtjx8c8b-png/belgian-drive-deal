@@ -7,7 +7,7 @@ import FiltersSidebar from "@/components/FiltersSidebar";
 import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
-import { mockCars } from "@/data/mockCars";
+import { useCarListings } from "@/hooks/useCarListings";
 import { useCarFilters } from "@/hooks/useCarFilters";
 import { useFavorites } from "@/hooks/useFavorites";
 import { usePagination } from "@/hooks/usePagination";
@@ -15,6 +15,8 @@ import { usePagination } from "@/hooks/usePagination";
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { cars, isLoading, hasDbCars } = useCarListings();
 
   const {
     filters,
@@ -24,7 +26,7 @@ const Index = () => {
     sortBy,
     setSortBy,
     activeFiltersCount,
-  } = useCarFilters(mockCars);
+  } = useCarFilters(cars);
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -42,7 +44,7 @@ const Index = () => {
   // Reset pagination when filters change
   useEffect(() => {
     resetPage();
-  }, [filters, sortBy]);
+  }, [filters, sortBy, cars]);
 
   const handleSearch = (brand: string, model: string, maxPrice: number) => {
     updateFilter("brand", brand);
