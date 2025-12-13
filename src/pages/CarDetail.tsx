@@ -83,7 +83,7 @@ const CarDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background dark">
+      <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-6 py-32 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -95,7 +95,7 @@ const CarDetail = () => {
 
   if (!car) {
     return (
-      <div className="min-h-screen bg-background dark">
+      <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-6 py-32 text-center">
           <h1 className="font-display text-3xl font-bold text-foreground mb-4">
@@ -257,7 +257,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
   const sellerName = dbListing?.contact_name || "AutoRa Motors";
 
   return (
-    <div className="min-h-screen bg-background dark">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-24 pb-20">
         {/* Breadcrumb */}
