@@ -5,13 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { unreadCount, hasUnread } = useUnreadMessages();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -62,9 +63,14 @@ const Header = () => {
               Favoris
             </Link>
             {user && (
-              <Link to="/messages" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1">
+              <Link to="/messages" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1 relative">
                 <MessageCircle className="w-4 h-4" />
                 Messages
+                {hasUnread && (
+                  <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
             )}
           </nav>
@@ -116,9 +122,14 @@ const Header = () => {
                 Favoris
               </Link>
               {user && (
-                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2 relative" onClick={() => setMobileMenuOpen(false)}>
                   <MessageCircle className="w-4 h-4" />
                   Messages
+                  {hasUnread && (
+                    <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1.5">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
               )}
               <div className="flex items-center gap-4 py-2">
