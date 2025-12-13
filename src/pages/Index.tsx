@@ -7,6 +7,8 @@ import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
 import { mockCars } from "@/data/mockCars";
 
+// Catalogue mis à jour avec 150 véhicules de toutes les marques
+
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
