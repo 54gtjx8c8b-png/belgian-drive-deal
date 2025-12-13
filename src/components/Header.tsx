@@ -1,4 +1,4 @@
-import { Menu, User, LogOut, Heart, MessageCircle } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -116,6 +116,20 @@ const Header = () => {
                 <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
               )}
             </Link>
+            <Link 
+              to="/faq" 
+              className={`relative font-medium flex items-center gap-1 transition-colors ${
+                location.pathname === "/faq" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <HelpCircle className="w-4 h-4" />
+              FAQ
+              {location.pathname === "/faq" && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+              )}
+            </Link>
             {user && (
               <Link 
                 to="/messages" 
@@ -184,6 +198,10 @@ const Header = () => {
               <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <Heart className="w-4 h-4" />
                 Favoris
+              </Link>
+              <Link to="/faq" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                <HelpCircle className="w-4 h-4" />
+                FAQ
               </Link>
               {user && (
                 <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2 relative" onClick={() => setMobileMenuOpen(false)}>
