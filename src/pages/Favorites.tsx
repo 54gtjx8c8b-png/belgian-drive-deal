@@ -2,16 +2,17 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CarCard from "@/components/CarCard";
-import { mockCars } from "@/data/mockCars";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCarListings } from "@/hooks/useCarListings";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Favorites = () => {
   const navigate = useNavigate();
   const { favorites, isFavorite, toggleFavorite, clearFavorites } = useFavorites();
+  const { cars } = useCarListings();
 
-  const favoriteCars = mockCars.filter((car) => favorites.includes(car.id));
+  const favoriteCars = cars.filter((car) => favorites.includes(car.id));
 
   return (
     <div className="min-h-screen bg-background">

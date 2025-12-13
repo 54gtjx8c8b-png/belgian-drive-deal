@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Car } from '@/components/CarCard';
-import { mockCars } from '@/data/mockCars';
 
 // Map database listing to Car interface
 const mapListingToCar = (listing: any): Car => {
@@ -27,7 +26,7 @@ const mapListingToCar = (listing: any): Car => {
 };
 
 export function useCarListings() {
-  const [dbCars, setDbCars] = useState<Car[]>([]);
+  const [cars, setCars] = useState<Car[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,9 +47,9 @@ export function useCarListings() {
           return;
         }
 
-        if (data && data.length > 0) {
+        if (data) {
           const mappedCars = data.map(mapListingToCar);
-          setDbCars(mappedCars);
+          setCars(mappedCars);
         }
       } catch (err) {
         console.error('Error:', err);
@@ -84,15 +83,10 @@ export function useCarListings() {
     };
   }, []);
 
-  // Combine DB cars (first) with mock cars (fallback/demo)
-  const allCars: Car[] = [...dbCars, ...mockCars];
-
   return {
-    cars: allCars,
-    dbCars,
-    mockCars,
+    cars,
     isLoading,
     error,
-    hasDbCars: dbCars.length > 0,
+    hasDbCars: cars.length > 0,
   };
 }

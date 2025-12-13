@@ -22,7 +22,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CarCard, { Car } from "@/components/CarCard";
 import { Button } from "@/components/ui/button";
-import { getCarById, getCarByIdFromDb, getRelatedCars, formatPrice, formatMileage } from "@/utils/carUtils";
+import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage } from "@/utils/carUtils";
+import { useCarListings } from "@/hooks/useCarListings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
@@ -37,6 +38,7 @@ const CarDetail = () => {
   const [car, setCar] = useState<Car | null>(null);
   const [dbListing, setDbListing] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { cars: allCars } = useCarListings();
 
   // Track view when page loads
   useTrackView(id);
@@ -48,15 +50,7 @@ const CarDetail = () => {
         return;
       }
 
-      // First check mock cars
-      const mockCar = getCarById(id);
-      if (mockCar) {
-        setCar(mockCar);
-        setIsLoading(false);
-        return;
-      }
-
-      // Then check database
+      // Check database
       const dbCar = await getCarByIdFromDb(id);
       if (dbCar) {
         setCar(dbCar);
@@ -79,7 +73,7 @@ const CarDetail = () => {
     fetchCar();
   }, [id]);
 
-  const relatedCars = id && car ? getRelatedCars(id, 4) : [];
+  const relatedCars = car ? getRelatedCarsFromList(car, allCars, 4) : [];
 
   if (isLoading) {
     return (
