@@ -16,6 +16,18 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Legend
+} from "recharts";
+import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface ListingStats {
   id: string;
@@ -31,12 +43,20 @@ interface ListingStats {
   created_at: string;
 }
 
+interface DailyStats {
+  date: string;
+  dateLabel: string;
+  views: number;
+  messages: number;
+}
+
 const SellerDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [listings, setListings] = useState<ListingStats[]>([]);
   const [totals, setTotals] = useState({ views: 0, messages: 0, favorites: 0 });
+  const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -61,8 +81,79 @@ const SellerDashboard = () => {
   useEffect(() => {
     if (user) {
       fetchStats();
+      fetchDailyStats();
     }
   }, [user]);
+
+  const fetchDailyStats = async () => {
+    if (!user) return;
+
+    try {
+      // Get user's listing IDs first
+      const { data: userListings } = await supabase
+        .from("car_listings")
+        .select("id")
+        .eq("user_id", user.id);
+
+      if (!userListings || userListings.length === 0) {
+        setDailyStats([]);
+        return;
+      }
+
+      const listingIds = userListings.map(l => l.id);
+      const thirtyDaysAgo = subDays(new Date(), 30);
+
+      // Fetch views with dates
+      const { data: viewsData } = await supabase
+        .from("car_views")
+        .select("viewed_at")
+        .in("car_listing_id", listingIds)
+        .gte("viewed_at", thirtyDaysAgo.toISOString());
+
+      // Fetch conversations with dates
+      const { data: conversationsData } = await supabase
+        .from("conversations")
+        .select("created_at")
+        .eq("seller_id", user.id)
+        .in("car_listing_id", listingIds)
+        .gte("created_at", thirtyDaysAgo.toISOString());
+
+      // Generate all days in the last 30 days
+      const days = eachDayOfInterval({
+        start: thirtyDaysAgo,
+        end: new Date()
+      });
+
+      // Count views and messages per day
+      const viewsByDay: Record<string, number> = {};
+      const messagesByDay: Record<string, number> = {};
+
+      viewsData?.forEach(v => {
+        const day = format(startOfDay(new Date(v.viewed_at)), "yyyy-MM-dd");
+        viewsByDay[day] = (viewsByDay[day] || 0) + 1;
+      });
+
+      conversationsData?.forEach(c => {
+        const day = format(startOfDay(new Date(c.created_at)), "yyyy-MM-dd");
+        messagesByDay[day] = (messagesByDay[day] || 0) + 1;
+      });
+
+      // Build daily stats array
+      const stats: DailyStats[] = days.map(day => {
+        const dateKey = format(day, "yyyy-MM-dd");
+        return {
+          date: dateKey,
+          dateLabel: format(day, "d MMM", { locale: fr }),
+          views: viewsByDay[dateKey] || 0,
+          messages: messagesByDay[dateKey] || 0,
+        };
+      });
+
+      setDailyStats(stats);
+    } catch (error) {
+      console.error("Error fetching daily stats:", error);
+    }
+  };
 
   const fetchStats = async () => {
     if (!user) return;
@@ -186,6 +277,22 @@ const SellerDashboard = () => {
     );
   };
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+          <p className="text-sm font-medium text-foreground mb-2">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -269,6 +376,127 @@ const SellerDashboard = () => {
                     <Skeleton className="h-8 w-16" />
                   ) : (
                     <div className="text-2xl font-bold text-foreground">{totals.favorites}</div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Views Chart */}
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <TrendingUp className="w-5 h-5 text-blue-500" />
+                    Évolution des vues
+                    <span className="text-sm font-normal text-muted-foreground ml-auto">
+                      30 derniers jours
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <Skeleton className="h-[250px] w-full" />
+                  ) : dailyStats.length === 0 ? (
+                    <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                      Aucune donnée disponible
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={dailyStats} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                        <XAxis 
+                          dataKey="dateLabel" 
+                          tick={{ fontSize: 12 }}
+                          className="text-muted-foreground"
+                          tickLine={false}
+                          axisLine={false}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12 }}
+                          className="text-muted-foreground"
+                          tickLine={false}
+                          axisLine={false}
+                          allowDecimals={false}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="views"
+                          name="Vues"
+                          stroke="#3b82f6"
+                          strokeWidth={2}
+                          fillOpacity={1}
+                          fill="url(#colorViews)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Messages Chart */}
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <MessageCircle className="w-5 h-5 text-green-500" />
+                    Évolution des messages
+                    <span className="text-sm font-normal text-muted-foreground ml-auto">
+                      30 derniers jours
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <Skeleton className="h-[250px] w-full" />
+                  ) : dailyStats.length === 0 ? (
+                    <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                      Aucune donnée disponible
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={dailyStats} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorMessages" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                        <XAxis 
+                          dataKey="dateLabel" 
+                          tick={{ fontSize: 12 }}
+                          className="text-muted-foreground"
+                          tickLine={false}
+                          axisLine={false}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12 }}
+                          className="text-muted-foreground"
+                          tickLine={false}
+                          axisLine={false}
+                          allowDecimals={false}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="messages"
+                          name="Messages"
+                          stroke="#22c55e"
+                          strokeWidth={2}
+                          fillOpacity={1}
+                          fill="url(#colorMessages)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   )}
                 </CardContent>
               </Card>
