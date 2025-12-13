@@ -97,6 +97,7 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
+    const messageContent = newMessage.trim();
     
     try {
       const { error } = await supabase
@@ -104,7 +105,7 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
         .insert({
           conversation_id: conversationId,
           sender_id: currentUserId,
-          content: newMessage.trim()
+          content: messageContent
         });
 
       if (error) throw error;
@@ -116,6 +117,15 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
         .eq('id', conversationId);
 
       setNewMessage('');
+
+      // Send email notification to seller (fire and forget)
+      supabase.functions.invoke('notify-seller', {
+        body: {
+          conversationId,
+          messageContent
+        }
+      }).catch(err => console.log('Email notification error (non-blocking):', err));
+      
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error("Erreur lors de l'envoi du message");

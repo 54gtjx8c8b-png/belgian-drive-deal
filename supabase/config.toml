@@ -2,3 +2,6 @@ project_id = "jbdsjqoonpieusfvkhyo"
 
 [functions.car-chat]
 verify_jwt = false
+
+[functions.notify-seller]
+verify_jwt = false
