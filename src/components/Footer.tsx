@@ -1,4 +1,5 @@
-import { Car, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import autoraLogo from "@/assets/autora-logo.png";
 
 const Footer = () => {
   return (
@@ -7,13 +8,15 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <a href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
-              </div>
-            <span className="font-display text-xl font-bold text-foreground">
-              Auto<span className="gradient-text">Ra</span>
-            </span>
+            <a href="/" className="flex items-center gap-3">
+              <img 
+                src={autoraLogo} 
+                alt="AutoRa Logo" 
+                className="w-10 h-10 rounded-xl object-cover"
+              />
+              <span className="font-display text-xl font-bold text-foreground">
+                Auto<span className="gradient-text">Ra</span>
+              </span>
             </a>
             <p className="text-muted-foreground text-sm leading-relaxed">
               La marketplace automobile belge de confiance. Tous nos véhicules sont vérifiés avec Car-Pass.
