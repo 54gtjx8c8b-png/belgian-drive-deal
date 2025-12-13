@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { HelpCircle, Search } from "lucide-react";
+import { HelpCircle, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Accordion,
@@ -112,8 +112,17 @@ const FAQ = () => {
                 placeholder="Rechercher une question..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 py-6 text-base rounded-xl bg-card border-border"
+                className="pl-12 pr-12 py-6 text-base rounded-xl bg-card border-border"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-muted hover:bg-muted-foreground/20 transition-colors"
+                  aria-label="Effacer la recherche"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              )}
             </div>
           </div>
         </section>
