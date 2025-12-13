@@ -8,6 +8,7 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCompareContext } from "@/contexts/CompareContext";
+import { useLanguage, getLanguageLabel } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ const Header = () => {
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,8 +56,8 @@ const Header = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
-      title: "Déconnexion",
-      description: "Vous avez été déconnecté avec succès",
+      title: t("logout.success"),
+      description: t("logout.description"),
     });
   };
 
@@ -108,25 +110,25 @@ const Header = () => {
 
           {/* Desktop Navigation - Centered */}
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink to="/">Acheter</NavLink>
-            <NavLink to="/sell">Vendre</NavLink>
+            <NavLink to="/">{t("nav.buy")}</NavLink>
+            <NavLink to="/sell">{t("nav.sell")}</NavLink>
             <NavLink to="/favorites">
               <span className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />
-                Favoris
+                {t("nav.favorites")}
               </span>
             </NavLink>
             <NavLink to="/compare" badge={compareCount}>
               <span className="flex items-center gap-1.5">
                 <GitCompareArrows className="w-4 h-4" />
-                Comparer
+                {t("nav.compare")}
               </span>
             </NavLink>
             {user && (
               <NavLink to="/messages" badge={hasUnread ? unreadCount : undefined}>
                 <span className="flex items-center gap-1.5">
                   <MessageCircle className="w-4 h-4" />
-                  Messages
+                  {t("nav.messages")}
                 </span>
               </NavLink>
             )}
@@ -149,14 +151,20 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
                   <Globe className="w-4 h-4" />
-                  FR
+                  {getLanguageLabel(language)}
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-[100px]">
-                <DropdownMenuItem className="font-medium">Français</DropdownMenuItem>
-                <DropdownMenuItem>Nederlands</DropdownMenuItem>
-                <DropdownMenuItem>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("fr")} className={language === "fr" ? "font-medium bg-accent" : ""}>
+                  Français
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("nl")} className={language === "nl" ? "font-medium bg-accent" : ""}>
+                  Nederlands
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("en")} className={language === "en" ? "font-medium bg-accent" : ""}>
+                  English
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -172,27 +180,27 @@ const Header = () => {
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer">
                     <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
+                    {t("nav.dashboard")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
                     <Settings className="w-4 h-4 mr-2" />
-                    Paramètres
+                    {t("nav.settings")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/faq")} className="cursor-pointer">
                     <HelpCircle className="w-4 h-4 mr-2" />
-                    FAQ
+                    {t("nav.faq")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500">
                     <LogOut className="w-4 h-4 mr-2" />
-                    Déconnexion
+                    {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate("/auth")}>
                 <User className="w-4 h-4 mr-2" />
-                Connexion
+                {t("nav.login")}
               </Button>
             )}
           </div>
@@ -210,15 +218,15 @@ const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-border animate-fade-up">
             <nav className="flex flex-col gap-3">
-              <Link to="/" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Acheter</Link>
-              <Link to="/sell" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Vendre</Link>
+              <Link to="/" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>{t("nav.buy")}</Link>
+              <Link to="/sell" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>{t("nav.sell")}</Link>
               <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <Heart className="w-4 h-4" />
-                Favoris
+                {t("nav.favorites")}
               </Link>
               <Link to="/compare" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <GitCompareArrows className="w-4 h-4" />
-                Comparer
+                {t("nav.compare")}
                 {compareCount > 0 && (
                   <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1.5">
                     {compareCount}
@@ -227,12 +235,12 @@ const Header = () => {
               </Link>
               <Link to="/faq" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <HelpCircle className="w-4 h-4" />
-                FAQ
+                {t("nav.faq")}
               </Link>
               {user && (
                 <Link to="/messages" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                   <MessageCircle className="w-4 h-4" />
-                  Messages
+                  {t("nav.messages")}
                   {hasUnread && (
                     <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-1.5">
                       {unreadCount > 9 ? '9+' : unreadCount}
@@ -247,7 +255,7 @@ const Header = () => {
                 className="text-foreground font-medium py-2 flex items-center gap-2"
               >
                 {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                {theme === "dark" ? "Mode clair" : "Mode sombre"}
+                {theme === "dark" ? t("theme.light") : t("theme.dark")}
               </button>
 
               <div className="h-px bg-border my-2" />
@@ -256,21 +264,21 @@ const Header = () => {
                 <>
                   <Link to="/dashboard" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                     <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
+                    {t("nav.dashboard")}
                   </Link>
                   <Link to="/settings" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                     <Settings className="w-4 h-4" />
-                    Paramètres
+                    {t("nav.settings")}
                   </Link>
                   <Button variant="outline" className="w-full rounded-xl mt-2" onClick={handleLogout}>
                     <LogOut className="w-4 h-4 mr-2" />
-                    Déconnexion
+                    {t("nav.logout")}
                   </Button>
                 </>
               ) : (
                 <Button className="w-full rounded-xl mt-2" onClick={() => navigate("/auth")}>
                   <User className="w-4 h-4 mr-2" />
-                  Connexion
+                  {t("nav.login")}
                 </Button>
               )}
             </nav>
