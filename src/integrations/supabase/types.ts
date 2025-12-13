@@ -24,6 +24,7 @@ export type Database = {
           contact_name: string
           contact_phone: string | null
           created_at: string
+          ct_valid: boolean | null
           description: string | null
           doors: number | null
           euro_norm: string | null
@@ -32,13 +33,16 @@ export type Database = {
           fuel_type: string
           id: string
           location: string | null
+          maintenance_book_complete: boolean | null
           mileage: number
           model: string
           photos: string[] | null
           power: number | null
           price: number
+          seller_type: string | null
           status: string | null
           transmission: string
+          tva_number: string | null
           updated_at: string
           user_id: string
           vin: string | null
@@ -53,6 +57,7 @@ export type Database = {
           contact_name: string
           contact_phone?: string | null
           created_at?: string
+          ct_valid?: boolean | null
           description?: string | null
           doors?: number | null
           euro_norm?: string | null
@@ -61,13 +66,16 @@ export type Database = {
           fuel_type: string
           id?: string
           location?: string | null
+          maintenance_book_complete?: boolean | null
           mileage: number
           model: string
           photos?: string[] | null
           power?: number | null
           price: number
+          seller_type?: string | null
           status?: string | null
           transmission: string
+          tva_number?: string | null
           updated_at?: string
           user_id: string
           vin?: string | null
@@ -82,6 +90,7 @@ export type Database = {
           contact_name?: string
           contact_phone?: string | null
           created_at?: string
+          ct_valid?: boolean | null
           description?: string | null
           doors?: number | null
           euro_norm?: string | null
@@ -90,13 +99,16 @@ export type Database = {
           fuel_type?: string
           id?: string
           location?: string | null
+          maintenance_book_complete?: boolean | null
           mileage?: number
           model?: string
           photos?: string[] | null
           power?: number | null
           price?: number
+          seller_type?: string | null
           status?: string | null
           transmission?: string
+          tva_number?: string | null
           updated_at?: string
           user_id?: string
           vin?: string | null

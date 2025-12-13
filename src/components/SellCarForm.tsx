@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Upload, X, Car, Info, User, Camera } from 'lucide-react';
+import { Upload, X, Car, Info, User, Camera, FileCheck, Building2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
 const sellCarSchema = z.object({
@@ -34,6 +35,13 @@ const sellCarSchema = z.object({
   contact_phone: z.string().optional(),
   contact_email: z.string().email("Email invalide"),
   location: z.string().optional(),
+  // Transparency fields
+  car_pass_verified: z.boolean().optional(),
+  ct_valid: z.boolean().optional(),
+  maintenance_book_complete: z.boolean().optional(),
+  // Seller type fields
+  seller_type: z.string().optional(),
+  tva_number: z.string().optional(),
 });
 
 type SellCarFormData = z.infer<typeof sellCarSchema>;
@@ -50,6 +58,10 @@ const transmissions = ['Manuelle', 'Automatique'];
 const bodyTypes = ['Berline', 'SUV', 'Citadine', 'Break', 'Coupé', 'Cabriolet', 'Monospace', 'Utilitaire'];
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
 const colors = ['Noir', 'Blanc', 'Gris', 'Bleu', 'Rouge', 'Vert', 'Beige', 'Marron', 'Orange', 'Jaune'];
+const sellerTypes = [
+  { value: 'particulier', label: 'Particulier' },
+  { value: 'professionnel', label: 'Professionnel' },
+];
 
 interface SellCarFormProps {
   editId?: string;
@@ -69,6 +81,10 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     defaultValues: {
       year: new Date().getFullYear(),
       doors: 5,
+      seller_type: 'particulier',
+      car_pass_verified: false,
+      ct_valid: false,
+      maintenance_book_complete: false,
     }
   });
 
@@ -120,6 +136,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           contact_phone: data.contact_phone || undefined,
           contact_email: data.contact_email,
           location: data.location || undefined,
+          // New fields
+          car_pass_verified: data.car_pass_verified || false,
+          ct_valid: data.ct_valid || false,
+          maintenance_book_complete: data.maintenance_book_complete || false,
+          seller_type: data.seller_type || 'particulier',
+          tva_number: data.tva_number || undefined,
         });
 
         // Set existing photos
@@ -248,6 +270,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
             contact_email: data.contact_email,
             location: data.location || null,
             photos: allPhotoUrls,
+            // New fields
+            car_pass_verified: data.car_pass_verified || false,
+            ct_valid: data.ct_valid || false,
+            maintenance_book_complete: data.maintenance_book_complete || false,
+            seller_type: data.seller_type || 'particulier',
+            tva_number: data.tva_number || null,
           })
           .eq('id', editId);
 
@@ -285,7 +313,13 @@ export function SellCarForm({ editId }: SellCarFormProps) {
             contact_email: data.contact_email,
             location: data.location || null,
             photos: allPhotoUrls,
-            status: 'pending'
+            status: 'pending',
+            // New fields
+            car_pass_verified: data.car_pass_verified || false,
+            ct_valid: data.ct_valid || false,
+            maintenance_book_complete: data.maintenance_book_complete || false,
+            seller_type: data.seller_type || 'particulier',
+            tva_number: data.tva_number || null,
           });
 
         if (error) {
@@ -672,6 +706,149 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                 </FormItem>
               )}
             />
+          </CardContent>
+        </Card>
+
+        {/* Transparency Indicators */}
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <FileCheck className="h-5 w-5 text-primary" />
+              Indicateurs de Transparence
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Ces informations rassurent les acheteurs et mettent en avant votre annonce.
+            </p>
+            
+            <FormField
+              control={form.control}
+              name="car_pass_verified"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="cursor-pointer">
+                      Car-Pass disponible
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Le Car-Pass certifie l'historique kilométrique du véhicule
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ct_valid"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="cursor-pointer">
+                      Contrôle Technique valide
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Le véhicule a passé le contrôle technique récemment
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maintenance_book_complete"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="cursor-pointer">
+                      Carnet d'entretien complet
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      L'historique d'entretien du véhicule est disponible
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Seller Type */}
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Building2 className="h-5 w-5 text-primary" />
+              Type de vendeur
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="seller_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vous êtes *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sellerTypes.map(type => (
+                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch('seller_type') === 'professionnel' && (
+              <FormField
+                control={form.control}
+                name="tva_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Numéro de TVA</FormLabel>
+                    <FormControl>
+                      <Input placeholder="BE0123456789" {...field} />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      En tant que professionnel, vous offrez une garantie légale d'1 an (Loi belge)
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {form.watch('seller_type') === 'particulier' && (
+              <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">
+                En tant que particulier, aucune garantie légale n'est obligatoire.
+              </p>
+            )}
           </CardContent>
         </Card>
 
