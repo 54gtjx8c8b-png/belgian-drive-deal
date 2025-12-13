@@ -1,5 +1,6 @@
 import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
 import { useCompareContext } from "@/contexts/CompareContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 export interface Car {
@@ -27,8 +28,10 @@ interface CarCardProps {
 
 const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCardProps) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
+  const { t, language } = useLanguage();
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("fr-BE", {
+    return new Intl.NumberFormat(language === "nl" ? "nl-BE" : language === "en" ? "en-BE" : "fr-BE", {
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0,
@@ -36,7 +39,7 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
   };
 
   const formatMileage = (km: number) => {
-    return new Intl.NumberFormat("fr-BE").format(km) + " km";
+    return new Intl.NumberFormat(language === "nl" ? "nl-BE" : language === "en" ? "en-BE" : "fr-BE").format(km) + " km";
   };
 
   const handleClick = () => {
@@ -58,12 +61,12 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
     e.stopPropagation();
     if (inCompare) {
       removeFromCompare(car.id);
-      toast.info("Retiré du comparateur");
+      toast.info(t("car.removedCompare"));
     } else if (canAddMore) {
       addToCompare(car);
-      toast.success("Ajouté au comparateur");
+      toast.success(t("car.addedCompare"));
     } else {
-      toast.warning("Maximum 3 véhicules dans le comparateur");
+      toast.warning(t("car.maxCompare"));
     }
   };
 
@@ -99,7 +102,7 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
                 ? "bg-primary text-primary-foreground"
                 : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-primary"
             }`}
-            title={inCompare ? "Retirer du comparateur" : "Ajouter au comparateur"}
+            title={inCompare ? t("car.removeCompare") : t("car.addCompare")}
           >
             <GitCompareArrows className="w-5 h-5" />
           </button>

@@ -2,6 +2,7 @@ import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro } from "lu
 import { CarFilters } from "@/types/filters";
 import { getAllBrands } from "@/utils/carUtils";
 import { Slider } from "@/components/ui/slider";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FiltersSidebarProps {
   isOpen: boolean;
@@ -11,18 +12,6 @@ interface FiltersSidebarProps {
   onReset: () => void;
   resultsCount: number;
 }
-
-const fuelTypes = [
-  { id: "essence", label: "Essence" },
-  { id: "diesel", label: "Diesel" },
-  { id: "hybride", label: "Hybride" },
-  { id: "electrique", label: "Électrique" },
-];
-
-const transmissions = [
-  { id: "manuelle", label: "Manuelle" },
-  { id: "automatique", label: "Automatique" },
-];
 
 const euroNorms = ["Euro 4", "Euro 5", "Euro 6", "Euro 6d"];
 
@@ -35,6 +24,19 @@ const FiltersSidebar = ({
   resultsCount,
 }: FiltersSidebarProps) => {
   const brands = getAllBrands();
+  const { t } = useLanguage();
+
+  const fuelTypes = [
+    { id: "essence", label: t("filters.gasoline") },
+    { id: "diesel", label: t("filters.diesel") },
+    { id: "hybride", label: t("filters.hybrid") },
+    { id: "electrique", label: t("filters.electric") },
+  ];
+
+  const transmissions = [
+    { id: "manuelle", label: t("filters.manual") },
+    { id: "automatique", label: t("filters.automatic") },
+  ];
 
   const toggleFuel = (fuelId: string) => {
     const newFuels = filters.fuelTypes.includes(fuelId)
@@ -77,7 +79,7 @@ const FiltersSidebar = ({
       >
         {/* Mobile header */}
         <div className="lg:hidden flex justify-between items-center mb-4">
-          <h2 className="font-display text-xl font-bold">Filtres</h2>
+          <h2 className="font-display text-xl font-bold">{t("filters.title")}</h2>
           <button onClick={onClose} className="p-2 hover:bg-secondary rounded-lg">
             <X className="w-5 h-5" />
           </button>
@@ -86,14 +88,14 @@ const FiltersSidebar = ({
         {/* Results count */}
         <div className="text-center py-3 px-4 rounded-xl bg-primary/10 border border-primary/20">
           <span className="text-primary font-bold text-lg">{resultsCount}</span>
-          <span className="text-muted-foreground ml-2">véhicules</span>
+          <span className="text-muted-foreground ml-2">{t("filters.vehicles")}</span>
         </div>
 
         {/* Brand Select */}
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Settings2 className="w-4 h-4 text-primary" />
-            Marque
+            {t("filters.brand")}
           </h3>
           <div className="relative">
             <select
@@ -101,7 +103,7 @@ const FiltersSidebar = ({
               onChange={(e) => onFilterChange("brand", e.target.value)}
               className="search-input w-full appearance-none cursor-pointer pr-10"
             >
-              <option value="">Toutes les marques</option>
+              <option value="">{t("filters.allBrands")}</option>
               {brands.map((brand) => (
                 <option key={brand} value={brand}>
                   {brand}
@@ -116,7 +118,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Fuel className="w-4 h-4 text-primary" />
-            Carburant
+            {t("filters.fuel")}
           </h3>
           <div className="grid grid-cols-2 gap-2">
             {fuelTypes.map((fuel) => (
@@ -137,7 +139,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Euro className="w-4 h-4 text-primary" />
-            Budget
+            {t("filters.budget")}
           </h3>
           <div className="px-2">
             <Slider
@@ -162,7 +164,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Calendar className="w-4 h-4 text-primary" />
-            Année
+            {t("filters.year")}
           </h3>
           <div className="px-2">
             <Slider
@@ -187,7 +189,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Gauge className="w-4 h-4 text-primary" />
-            Kilométrage
+            {t("filters.mileage")}
           </h3>
           <div className="px-2">
             <Slider
@@ -212,7 +214,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Settings2 className="w-4 h-4 text-primary" />
-            Boîte de vitesse
+            {t("filters.transmission")}
           </h3>
           <div className="flex gap-2">
             {transmissions.map((trans) => (
@@ -238,7 +240,7 @@ const FiltersSidebar = ({
         <div className="space-y-3">
           <h3 className="flex items-center gap-2 font-semibold text-foreground">
             <Leaf className="w-4 h-4 text-primary" />
-            Norme Euro (LEZ)
+            {t("filters.euroNorm")}
           </h3>
           <div className="grid grid-cols-2 gap-2">
             {euroNorms.map((norm) => (
@@ -263,7 +265,7 @@ const FiltersSidebar = ({
               className="w-4 h-4 rounded border-border bg-secondary text-primary focus:ring-primary"
             />
             <span className="text-sm text-muted-foreground">
-              Compatible LEZ uniquement
+              {t("filters.lezOnly")}
             </span>
           </label>
         </div>
@@ -273,7 +275,7 @@ const FiltersSidebar = ({
           onClick={onReset}
           className="w-full py-3 text-center text-sm text-muted-foreground hover:text-foreground border border-border rounded-xl hover:bg-secondary transition-colors"
         >
-          Réinitialiser les filtres
+          {t("filters.reset")}
         </button>
       </aside>
     </>

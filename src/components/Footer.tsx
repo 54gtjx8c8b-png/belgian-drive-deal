@@ -1,14 +1,18 @@
 import { Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import autoraLogo from "@/assets/autora-logo.png";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-card border-t border-border mt-20">
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <a href="/" className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
               <img 
                 src={autoraLogo} 
                 alt="AutoRa Logo" 
@@ -17,34 +21,34 @@ const Footer = () => {
               <span className="font-display text-xl font-bold text-foreground">
                 Auto<span className="gradient-text">Ra</span>
               </span>
-            </a>
+            </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              La marketplace automobile belge de confiance. Tous nos véhicules sont vérifiés avec Car-Pass.
+              {t("footer.description")}
             </p>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="font-display font-bold text-foreground mb-4">Navigation</h4>
+            <h4 className="font-display font-bold text-foreground mb-4">{t("footer.navigation")}</h4>
             <ul className="space-y-3">
               <li>
+                <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("footer.buyCar")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/sell" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("footer.sellCar")}
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Acheter une voiture
+                  {t("footer.estimate")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Vendre ma voiture
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Estimer mon véhicule
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Guide LEZ Belgique
+                  {t("footer.lezGuide")}
                 </a>
               </li>
             </ul>
@@ -52,31 +56,31 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="font-display font-bold text-foreground mb-4">Informations</h4>
+            <h4 className="font-display font-bold text-foreground mb-4">{t("footer.info")}</h4>
             <ul className="space-y-3">
               <li>
-                <a href="/about" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  À propos de nous
-                </a>
+                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("footer.about")}
+                </Link>
               </li>
               <li>
-                <a href="/faq" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  FAQ
+                <Link to="/faq" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("nav.faq")}
+                </Link>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("footer.carpass")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Car-Pass Belgique
+                  {t("footer.terms")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Conditions générales
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Politique de confidentialité
+                  {t("footer.privacy")}
                 </a>
               </li>
             </ul>
@@ -84,7 +88,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-bold text-foreground mb-4">Contact</h4>
+            <h4 className="font-display font-bold text-foreground mb-4">{t("footer.contact")}</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 text-primary" />
@@ -105,10 +109,10 @@ const Footer = () => {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 AutoRa. Tous droits réservés.
+            © 2024 AutoRa. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-sm text-muted-foreground">Fait avec ❤️ en Belgique</span>
+            <span className="text-sm text-muted-foreground">{t("footer.madeWith")}</span>
           </div>
         </div>
       </div>
