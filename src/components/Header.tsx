@@ -1,4 +1,4 @@
-import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle } from "lucide-react";
+import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useCompareContext } from "@/contexts/CompareContext";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,6 +17,7 @@ const Header = () => {
   const location = useLocation();
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
+  const { compareCount } = useCompareContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,6 +119,25 @@ const Header = () => {
               )}
             </Link>
             <Link 
+              to="/compare" 
+              className={`relative font-medium flex items-center gap-1 transition-colors ${
+                location.pathname === "/compare" 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <GitCompareArrows className="w-4 h-4" />
+              Comparer
+              {location.pathname === "/compare" && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+              )}
+              {compareCount > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1">
+                  {compareCount}
+                </span>
+              )}
+            </Link>
+            <Link 
               to="/faq" 
               className={`relative font-medium flex items-center gap-1 transition-colors ${
                 location.pathname === "/faq" 
@@ -198,6 +219,15 @@ const Header = () => {
               <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <Heart className="w-4 h-4" />
                 Favoris
+              </Link>
+              <Link to="/compare" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                <GitCompareArrows className="w-4 h-4" />
+                Comparer
+                {compareCount > 0 && (
+                  <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1.5">
+                    {compareCount}
+                  </span>
+                )}
               </Link>
               <Link to="/faq" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <HelpCircle className="w-4 h-4" />

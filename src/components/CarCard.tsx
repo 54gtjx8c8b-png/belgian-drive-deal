@@ -1,4 +1,6 @@
-import { Fuel, Calendar, Gauge, Shield, MapPin, Heart } from "lucide-react";
+import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
+import { useCompareContext } from "@/contexts/CompareContext";
+import { toast } from "sonner";
 
 export interface Car {
   id: string;
@@ -24,6 +26,7 @@ interface CarCardProps {
 }
 
 const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCardProps) => {
+  const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("fr-BE", {
       style: "currency",
@@ -49,6 +52,21 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
     }
   };
 
+  const inCompare = isInCompare(car.id);
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (inCompare) {
+      removeFromCompare(car.id);
+      toast.info("Retiré du comparateur");
+    } else if (canAddMore) {
+      addToCompare(car);
+      toast.success("Ajouté au comparateur");
+    } else {
+      toast.warning("Maximum 3 véhicules dans le comparateur");
+    }
+  };
+
   return (
     <article
       className="glass-card overflow-hidden group cursor-pointer"
@@ -62,17 +80,30 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
 
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavoriteClick}
-          className={`absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-            isFavorite
-              ? "bg-red-500 text-white"
-              : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-red-500"
-          }`}
-        >
-          <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
-        </button>
+        {/* Action Buttons */}
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
+          <button
+            onClick={handleFavoriteClick}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              isFavorite
+                ? "bg-red-500 text-white"
+                : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-red-500"
+            }`}
+          >
+            <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+          </button>
+          <button
+            onClick={handleCompareClick}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              inCompare
+                ? "bg-primary text-primary-foreground"
+                : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-primary"
+            }`}
+            title={inCompare ? "Retirer du comparateur" : "Ajouter au comparateur"}
+          >
+            <GitCompareArrows className="w-5 h-5" />
+          </button>
+        </div>
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
