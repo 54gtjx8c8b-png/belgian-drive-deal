@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
 import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -26,7 +27,7 @@ interface CarCardProps {
   onClick?: (carId: string) => void;
 }
 
-const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCardProps) => {
+const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
 
@@ -72,6 +73,7 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
 
   return (
     <article
+      ref={ref as React.Ref<HTMLElement>}
       className="glass-card overflow-hidden group cursor-pointer"
       onClick={handleClick}
     >
@@ -163,6 +165,8 @@ const CarCard = ({ car, isFavorite = false, onToggleFavorite, onClick }: CarCard
       </div>
     </article>
   );
-};
+});
+
+CarCard.displayName = "CarCard";
 
 export default CarCard;
