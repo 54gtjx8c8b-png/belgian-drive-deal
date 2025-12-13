@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CompareProvider } from "@/contexts/CompareContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
@@ -22,26 +23,28 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CompareProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/car/:id" element={<CarDetail />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/sell" element={<SellCar />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/compare" element={<Compare />} />
-            <Route path="/dashboard" element={<SellerDashboard />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </CompareProvider>
+      <LanguageProvider>
+        <CompareProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/car/:id" element={<CarDetail />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/sell" element={<SellCar />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/compare" element={<Compare />} />
+              <Route path="/dashboard" element={<SellerDashboard />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </CompareProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
