@@ -234,12 +234,17 @@ const FAQ = () => {
                 </p>
               </div>
             ) : (
-              <Accordion type="single" collapsible className="space-y-4">
+              <Accordion 
+                key={`${activeCategory}-${searchQuery}`}
+                type="single" 
+                collapsible 
+                className="space-y-4"
+              >
                 {filteredFaqs.map((faq, index) => (
                   <AccordionItem 
-                    key={index} 
+                    key={`${faq.question}-${index}`} 
                     value={`item-${index}`}
-                    className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-lg transition-shadow animate-fade-up"
+                    className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-lg transition-shadow animate-fade-in"
                     style={{ animationDelay: `${0.05 * index}s` }}
                   >
                     <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
