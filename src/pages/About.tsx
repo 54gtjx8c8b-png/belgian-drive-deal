@@ -1,6 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
+import { Users, Shield, Car, Award, MapPin, Heart, HelpCircle } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const About = () => {
   const team = [
@@ -46,6 +52,33 @@ const About = () => {
       icon: MapPin,
       title: "Proximité",
       description: "Une plateforme 100% belge, adaptée aux spécificités du marché local et aux zones LEZ."
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "Qu'est-ce que le Car-Pass ?",
+      answer: "Le Car-Pass est un document officiel belge qui retrace l'historique kilométrique d'un véhicule. Il permet de vérifier que le compteur n'a pas été manipulé et garantit la transparence lors de l'achat d'une voiture d'occasion."
+    },
+    {
+      question: "Comment fonctionne la vérification LEZ ?",
+      answer: "Nous vérifions automatiquement la conformité de chaque véhicule aux zones de basses émissions (LEZ) de Bruxelles, Anvers et Gand. Les véhicules conformes Euro 6 ou supérieur peuvent circuler librement dans ces zones."
+    },
+    {
+      question: "Comment puis-je vendre ma voiture sur AutoRa ?",
+      answer: "C'est simple ! Créez un compte, cliquez sur 'Vendre', remplissez les informations de votre véhicule avec photos et description, puis soumettez votre annonce. Notre équipe la vérifiera avant publication."
+    },
+    {
+      question: "Les annonces sont-elles gratuites ?",
+      answer: "Oui, la publication d'annonces est entièrement gratuite pour les particuliers. Nous croyons en un accès démocratique au marché automobile belge."
+    },
+    {
+      question: "Comment contacter un vendeur ?",
+      answer: "Une fois connecté, vous pouvez envoyer un message directement au vendeur via notre système de messagerie intégré. Vos conversations sont sécurisées et restent privées."
+    },
+    {
+      question: "Que faire si je détecte une fraude ?",
+      answer: "Signalez immédiatement l'annonce suspecte via le bouton de signalement. Notre équipe examine chaque signalement sous 24h et prend les mesures nécessaires pour protéger notre communauté."
     }
   ];
 
@@ -156,6 +189,41 @@ const About = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="container mx-auto px-6 py-16">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <HelpCircle className="w-4 h-4" />
+              FAQ
+            </div>
+            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
+              Questions fréquentes
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Tout ce que vous devez savoir sur AutoRa et nos services.
+            </p>
+          </div>
+          
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-lg transition-shadow"
+                >
+                  <AccordionTrigger className="text-left font-display font-semibold text-foreground hover:text-primary py-5">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-5">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
 
