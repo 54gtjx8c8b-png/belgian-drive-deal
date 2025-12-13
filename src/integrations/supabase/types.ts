@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      car_listings: {
+        Row: {
+          body_type: string
+          brand: string
+          car_pass_verified: boolean | null
+          color: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          doors: number | null
+          euro_norm: string | null
+          features: string[] | null
+          first_registration: string | null
+          fuel_type: string
+          id: string
+          location: string | null
+          mileage: number
+          model: string
+          photos: string[] | null
+          power: number | null
+          price: number
+          status: string | null
+          transmission: string
+          updated_at: string
+          user_id: string
+          vin: string | null
+          year: number
+        }
+        Insert: {
+          body_type: string
+          brand: string
+          car_pass_verified?: boolean | null
+          color: string
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          doors?: number | null
+          euro_norm?: string | null
+          features?: string[] | null
+          first_registration?: string | null
+          fuel_type: string
+          id?: string
+          location?: string | null
+          mileage: number
+          model: string
+          photos?: string[] | null
+          power?: number | null
+          price: number
+          status?: string | null
+          transmission: string
+          updated_at?: string
+          user_id: string
+          vin?: string | null
+          year: number
+        }
+        Update: {
+          body_type?: string
+          brand?: string
+          car_pass_verified?: boolean | null
+          color?: string
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          doors?: number | null
+          euro_norm?: string | null
+          features?: string[] | null
+          first_registration?: string | null
+          fuel_type?: string
+          id?: string
+          location?: string | null
+          mileage?: number
+          model?: string
+          photos?: string[] | null
+          power?: number | null
+          price?: number
+          status?: string | null
+          transmission?: string
+          updated_at?: string
+          user_id?: string
+          vin?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

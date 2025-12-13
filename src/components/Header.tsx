@@ -51,15 +51,16 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
               Acheter
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+            </Link>
+            <Link to="/sell" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
               Vendre
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              Mon Garage
-            </a>
+            </Link>
+            <Link to="/favorites" className="text-muted-foreground hover:text-foreground transition-colors font-medium flex items-center gap-1">
+              <Heart className="w-4 h-4" />
+              Favoris
+            </Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -102,9 +103,12 @@ const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 border-t border-border animate-fade-up">
             <nav className="flex flex-col gap-4">
-              <a href="#" className="text-foreground font-medium py-2">Acheter</a>
-              <a href="#" className="text-foreground font-medium py-2">Vendre</a>
-              <a href="#" className="text-foreground font-medium py-2">Mon Garage</a>
+              <Link to="/" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Acheter</Link>
+              <Link to="/sell" className="text-foreground font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Vendre</Link>
+              <Link to="/favorites" className="text-foreground font-medium py-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                <Heart className="w-4 h-4" />
+                Favoris
+              </Link>
               <div className="flex items-center gap-4 py-2">
                 <button className="text-foreground font-medium">FR</button>
                 <button className="text-muted-foreground">NL</button>
