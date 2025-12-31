@@ -65,11 +65,12 @@ export const formatMileage = (km: number): string => {
   return new Intl.NumberFormat("fr-BE").format(km) + " km";
 };
 
-// Get car by ID from database
+// Get car by ID from database (using secure public view)
 export const getCarByIdFromDb = async (id: string): Promise<Car | null> => {
   try {
+    // Use the secure public view that excludes sensitive data
     const { data, error } = await supabase
-      .from('car_listings')
+      .from('car_listings_public')
       .select('*')
       .eq('id', id)
       .maybeSingle();
@@ -79,6 +80,27 @@ export const getCarByIdFromDb = async (id: string): Promise<Car | null> => {
     }
 
     return mapListingToCar(data);
+  } catch {
+    return null;
+  }
+};
+
+// Get seller contact info securely (authenticated users only)
+export const getSellerContact = async (listingId: string): Promise<{
+  contact_name: string;
+  contact_phone: string | null;
+  contact_email: string;
+  user_id: string;
+} | null> => {
+  try {
+    const { data, error } = await supabase
+      .rpc('get_seller_contact', { listing_id: listingId });
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    return data[0];
   } catch {
     return null;
   }

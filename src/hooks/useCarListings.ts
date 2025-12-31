@@ -35,10 +35,10 @@ export function useCarListings() {
       try {
         setIsLoading(true);
         
+        // Use the secure public view that excludes sensitive data
         const { data, error: fetchError } = await supabase
-          .from('car_listings')
+          .from('car_listings_public')
           .select('*')
-          .eq('status', 'approved')
           .order('created_at', { ascending: false });
 
         if (fetchError) {
