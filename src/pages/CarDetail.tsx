@@ -21,7 +21,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CarCard, { Car } from "@/components/CarCard";
 import { Button } from "@/components/ui/button";
-import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage } from "@/utils/carUtils";
+import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
 import { useCarListings } from "@/hooks/useCarListings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
@@ -39,6 +39,12 @@ const CarDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [car, setCar] = useState<Car | null>(null);
   const [dbListing, setDbListing] = useState<any>(null);
+  const [sellerContact, setSellerContact] = useState<{
+    contact_name: string;
+    contact_phone: string | null;
+    contact_email: string;
+    user_id: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { cars: allCars } = useCarListings();
 
@@ -52,20 +58,26 @@ const CarDetail = () => {
         return;
       }
 
-      // Check database
+      // Fetch car from secure public view
       const dbCar = await getCarByIdFromDb(id);
       if (dbCar) {
         setCar(dbCar);
         
-        // Also fetch full listing for extra details
+        // Fetch additional public listing data (without sensitive fields)
         const { data } = await supabase
-          .from('car_listings')
+          .from('car_listings_public')
           .select('*')
           .eq('id', id)
           .maybeSingle();
         
         if (data) {
           setDbListing(data);
+        }
+
+        // Fetch seller contact info securely (only if user is authenticated)
+        const contact = await getSellerContact(id);
+        if (contact) {
+          setSellerContact(contact);
         }
       }
       
@@ -136,17 +148,18 @@ const CarDetail = () => {
   };
 
   const handleContact = async (method: string) => {
-    if (dbListing) {
-      if (method === "Email" && dbListing.contact_email) {
-        window.location.href = `mailto:${dbListing.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
+    // Use secure seller contact data (only available to authenticated users)
+    if (sellerContact) {
+      if (method === "Email" && sellerContact.contact_email) {
+        window.location.href = `mailto:${sellerContact.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
         return;
       }
-      if (method === "Appeler" && dbListing.contact_phone) {
-        window.location.href = `tel:${dbListing.contact_phone}`;
+      if (method === "Appeler" && sellerContact.contact_phone) {
+        window.location.href = `tel:${sellerContact.contact_phone}`;
         return;
       }
-      if (method === "WhatsApp" && dbListing.contact_phone) {
-        const phone = dbListing.contact_phone.replace(/\D/g, '');
+      if (method === "WhatsApp" && sellerContact.contact_phone) {
+        const phone = sellerContact.contact_phone.replace(/\D/g, '');
         window.open(`https://wa.me/${phone}?text=Bonjour, je suis intéressé par votre ${car.brand} ${car.model}`, '_blank');
         return;
       }
@@ -154,12 +167,18 @@ const CarDetail = () => {
         await startConversation();
         return;
       }
+    } else if (method === "Message" && dbListing) {
+      // Message button requires authentication but we can still start the flow
+      await startConversation();
+      return;
     }
     
+    // User not authenticated - prompt them to login
     toast({
-      title: "Contact",
-      description: `Fonctionnalité "${method}" disponible en version complète`,
+      title: "Connexion requise",
+      description: "Connectez-vous pour accéder aux coordonnées du vendeur",
     });
+    navigate('/auth');
   };
 
   const startConversation = async () => {
@@ -184,8 +203,19 @@ const CarDetail = () => {
 
     const currentUserId = session.user.id;
 
+    // Fetch seller contact to get user_id securely
+    const contact = await getSellerContact(id!);
+    if (!contact) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de récupérer les informations du vendeur",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Can't message yourself
-    if (currentUserId === dbListing.user_id) {
+    if (currentUserId === contact.user_id) {
       toast({
         title: "Action impossible",
         description: "Vous ne pouvez pas vous envoyer un message",
@@ -200,7 +230,7 @@ const CarDetail = () => {
         .select('id')
         .eq('car_listing_id', dbListing.id)
         .eq('buyer_id', currentUserId)
-        .eq('seller_id', dbListing.user_id)
+        .eq('seller_id', contact.user_id)
         .maybeSingle();
 
       if (existingConvo) {
@@ -208,13 +238,13 @@ const CarDetail = () => {
         return;
       }
 
-      // Create new conversation
+      // Create new conversation using secure seller_id from contact
       const { error } = await supabase
         .from('conversations')
         .insert({
           car_listing_id: dbListing.id,
           buyer_id: currentUserId,
-          seller_id: dbListing.user_id,
+          seller_id: contact.user_id,
           car_brand: car.brand,
           car_model: car.model,
           car_image: car.image
@@ -250,7 +280,8 @@ const CarDetail = () => {
   const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
 Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
 
-  const sellerName = dbListing?.contact_name || "AutoRa Motors";
+  // Use seller contact name if available (authenticated), otherwise show placeholder
+  const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
 
   return (
     <div className="min-h-screen bg-background">
