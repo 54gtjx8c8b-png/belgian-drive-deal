@@ -146,6 +146,13 @@ export type Database = {
             referencedRelation: "car_listings"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "car_views_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       conversations: {
@@ -190,6 +197,13 @@ export type Database = {
             referencedRelation: "car_listings"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "conversations_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       favorites: {
@@ -217,6 +231,13 @@ export type Database = {
             columns: ["car_listing_id"]
             isOneToOne: false
             referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
             referencedColumns: ["id"]
           },
         ]
@@ -282,10 +303,101 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      car_listings_public: {
+        Row: {
+          body_type: string | null
+          brand: string | null
+          car_pass_verified: boolean | null
+          color: string | null
+          created_at: string | null
+          ct_valid: boolean | null
+          description: string | null
+          doors: number | null
+          euro_norm: string | null
+          features: string[] | null
+          first_registration: string | null
+          fuel_type: string | null
+          id: string | null
+          location: string | null
+          maintenance_book_complete: boolean | null
+          mileage: number | null
+          model: string | null
+          photos: string[] | null
+          power: number | null
+          price: number | null
+          seller_type: string | null
+          status: string | null
+          transmission: string | null
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          body_type?: string | null
+          brand?: string | null
+          car_pass_verified?: boolean | null
+          color?: string | null
+          created_at?: string | null
+          ct_valid?: boolean | null
+          description?: string | null
+          doors?: number | null
+          euro_norm?: string | null
+          features?: string[] | null
+          first_registration?: string | null
+          fuel_type?: string | null
+          id?: string | null
+          location?: string | null
+          maintenance_book_complete?: boolean | null
+          mileage?: number | null
+          model?: string | null
+          photos?: string[] | null
+          power?: number | null
+          price?: number | null
+          seller_type?: string | null
+          status?: string | null
+          transmission?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          body_type?: string | null
+          brand?: string | null
+          car_pass_verified?: boolean | null
+          color?: string | null
+          created_at?: string | null
+          ct_valid?: boolean | null
+          description?: string | null
+          doors?: number | null
+          euro_norm?: string | null
+          features?: string[] | null
+          first_registration?: string | null
+          fuel_type?: string | null
+          id?: string | null
+          location?: string | null
+          maintenance_book_complete?: boolean | null
+          mileage?: number | null
+          model?: string | null
+          photos?: string[] | null
+          power?: number | null
+          price?: number | null
+          seller_type?: string | null
+          status?: string | null
+          transmission?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_seller_contact: {
+        Args: { listing_id: string }
+        Returns: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
