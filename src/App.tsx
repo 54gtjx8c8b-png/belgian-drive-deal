@@ -16,6 +16,7 @@ import FAQ from "./pages/FAQ";
 import Compare from "./pages/Compare";
 import SellerDashboard from "./pages/SellerDashboard";
 import Settings from "./pages/Settings";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/compare" element={<Compare />} />
               <Route path="/dashboard" element={<SellerDashboard />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
