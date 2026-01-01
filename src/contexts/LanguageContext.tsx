@@ -136,6 +136,9 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.checkSpam": "Vérifiez également votre dossier spam si vous ne trouvez pas l'email.",
     "auth.emailNotVerified": "Email non vérifié",
     "auth.emailNotVerifiedDesc": "Veuillez vérifier votre email avant de vous connecter.",
+    "auth.resendEmail": "Renvoyer l'email de vérification",
+    "auth.resendSuccess": "Email envoyé !",
+    "auth.resendSuccessDesc": "Un nouvel email de vérification a été envoyé.",
     
     // Sell Car
     "sell.title": "Vendez votre voiture",
@@ -371,6 +374,9 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.checkSpam": "Controleer ook uw spam-map als u de e-mail niet kunt vinden.",
     "auth.emailNotVerified": "E-mail niet geverifieerd",
     "auth.emailNotVerifiedDesc": "Verifieer uw e-mail voordat u inlogt.",
+    "auth.resendEmail": "Verificatie-e-mail opnieuw verzenden",
+    "auth.resendSuccess": "E-mail verzonden!",
+    "auth.resendSuccessDesc": "Er is een nieuwe verificatie-e-mail verzonden.",
     
     // Sell Car
     "sell.title": "Verkoop uw auto",
@@ -606,6 +612,9 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.checkSpam": "Also check your spam folder if you can't find the email.",
     "auth.emailNotVerified": "Email not verified",
     "auth.emailNotVerifiedDesc": "Please verify your email before logging in.",
+    "auth.resendEmail": "Resend verification email",
+    "auth.resendSuccess": "Email sent!",
+    "auth.resendSuccessDesc": "A new verification email has been sent.",
     
     // Sell Car
     "sell.title": "Sell your car",
