@@ -108,6 +108,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.unexpectedError": "Une erreur inattendue s'est produite",
     "auth.invalidEmail": "Adresse email invalide",
     "auth.passwordMin": "Le mot de passe doit contenir au moins 6 caractères",
+    "auth.passwordMinStrong": "Le mot de passe doit contenir au moins 8 caractères",
+    "auth.passwordUppercase": "Le mot de passe doit contenir au moins une majuscule",
+    "auth.passwordLowercase": "Le mot de passe doit contenir au moins une minuscule",
+    "auth.passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
+    "auth.passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial",
     "auth.nameMin": "Le nom doit contenir au moins 2 caractères",
     
     // Sell Car
@@ -316,6 +321,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.unexpectedError": "Er is een onverwachte fout opgetreden",
     "auth.invalidEmail": "Ongeldig e-mailadres",
     "auth.passwordMin": "Het wachtwoord moet minimaal 6 tekens bevatten",
+    "auth.passwordMinStrong": "Het wachtwoord moet minimaal 8 tekens bevatten",
+    "auth.passwordUppercase": "Het wachtwoord moet minimaal één hoofdletter bevatten",
+    "auth.passwordLowercase": "Het wachtwoord moet minimaal één kleine letter bevatten",
+    "auth.passwordNumber": "Het wachtwoord moet minimaal één cijfer bevatten",
+    "auth.passwordSpecial": "Het wachtwoord moet minimaal één speciaal teken bevatten",
     "auth.nameMin": "De naam moet minimaal 2 tekens bevatten",
     
     // Sell Car
@@ -524,6 +534,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.unexpectedError": "An unexpected error occurred",
     "auth.invalidEmail": "Invalid email address",
     "auth.passwordMin": "Password must be at least 6 characters",
+    "auth.passwordMinStrong": "Password must be at least 8 characters",
+    "auth.passwordUppercase": "Password must contain at least one uppercase letter",
+    "auth.passwordLowercase": "Password must contain at least one lowercase letter",
+    "auth.passwordNumber": "Password must contain at least one number",
+    "auth.passwordSpecial": "Password must contain at least one special character",
     "auth.nameMin": "Name must be at least 2 characters",
     
     // Sell Car

@@ -22,7 +22,12 @@ const Auth = () => {
   const { t } = useLanguage();
 
   const emailSchema = z.string().email(t("auth.invalidEmail"));
-  const passwordSchema = z.string().min(6, t("auth.passwordMin"));
+  const passwordSchema = z.string()
+    .min(8, t("auth.passwordMinStrong"))
+    .regex(/[A-Z]/, t("auth.passwordUppercase"))
+    .regex(/[a-z]/, t("auth.passwordLowercase"))
+    .regex(/[0-9]/, t("auth.passwordNumber"))
+    .regex(/[^A-Za-z0-9]/, t("auth.passwordSpecial"));
   const nameSchema = z.string().min(2, t("auth.nameMin"));
 
   useEffect(() => {
