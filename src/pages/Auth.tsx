@@ -18,6 +18,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
   
   const navigate = useNavigate();
@@ -316,16 +317,53 @@ const Auth = () => {
                 <p className="text-sm text-muted-foreground mb-6">
                   {t("auth.checkSpam")}
                 </p>
-                <Button
-                  onClick={() => {
-                    setVerificationEmailSent(false);
-                    setIsLogin(true);
-                  }}
-                  variant="outline"
-                  className="w-full h-12"
-                >
-                  {t("auth.backToLogin")}
-                </Button>
+                <div className="space-y-3">
+                  <Button
+                    onClick={async () => {
+                      setResendLoading(true);
+                      try {
+                        const { error } = await supabase.auth.resend({
+                          type: 'signup',
+                          email: email,
+                        });
+                        if (error) {
+                          toast({
+                            title: t("auth.error"),
+                            description: error.message,
+                            variant: "destructive",
+                          });
+                        } else {
+                          toast({
+                            title: t("auth.resendSuccess"),
+                            description: t("auth.resendSuccessDesc"),
+                          });
+                        }
+                      } catch (error) {
+                        toast({
+                          title: t("auth.error"),
+                          description: t("auth.unexpectedError"),
+                          variant: "destructive",
+                        });
+                      } finally {
+                        setResendLoading(false);
+                      }
+                    }}
+                    className="w-full h-12 btn-primary-gradient"
+                    disabled={resendLoading}
+                  >
+                    {resendLoading ? t("auth.loading") : t("auth.resendEmail")}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setVerificationEmailSent(false);
+                      setIsLogin(true);
+                    }}
+                    variant="outline"
+                    className="w-full h-12"
+                  >
+                    {t("auth.backToLogin")}
+                  </Button>
+                </div>
               </div>
             ) : resetEmailSent ? (
               // Email sent confirmation
