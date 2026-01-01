@@ -19,6 +19,7 @@ const Auth = () => {
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
   
   const navigate = useNavigate();
@@ -337,6 +338,17 @@ const Auth = () => {
                             title: t("auth.resendSuccess"),
                             description: t("auth.resendSuccessDesc"),
                           });
+                          // Start 60 second cooldown
+                          setResendCooldown(60);
+                          const interval = setInterval(() => {
+                            setResendCooldown((prev) => {
+                              if (prev <= 1) {
+                                clearInterval(interval);
+                                return 0;
+                              }
+                              return prev - 1;
+                            });
+                          }, 1000);
                         }
                       } catch (error) {
                         toast({
@@ -349,9 +361,14 @@ const Auth = () => {
                       }
                     }}
                     className="w-full h-12 btn-primary-gradient"
-                    disabled={resendLoading}
+                    disabled={resendLoading || resendCooldown > 0}
                   >
-                    {resendLoading ? t("auth.loading") : t("auth.resendEmail")}
+                    {resendLoading 
+                      ? t("auth.loading") 
+                      : resendCooldown > 0 
+                        ? `${t("auth.resendEmail")} (${resendCooldown}s)`
+                        : t("auth.resendEmail")
+                    }
                   </Button>
                   <Button
                     onClick={() => {
