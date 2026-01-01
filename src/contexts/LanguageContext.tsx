@@ -131,6 +131,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.passwordResetSuccessDesc": "Votre mot de passe a été modifié avec succès.",
     "auth.goToHome": "Aller à l'accueil",
     "auth.resetLinkExpired": "Le lien de réinitialisation a expiré ou est invalide.",
+    "auth.verificationEmailSent": "Vérifiez votre email",
+    "auth.verificationEmailSentDesc": "Nous avons envoyé un email de vérification à votre adresse. Cliquez sur le lien pour activer votre compte.",
+    "auth.checkSpam": "Vérifiez également votre dossier spam si vous ne trouvez pas l'email.",
+    "auth.emailNotVerified": "Email non vérifié",
+    "auth.emailNotVerifiedDesc": "Veuillez vérifier votre email avant de vous connecter.",
     
     // Sell Car
     "sell.title": "Vendez votre voiture",
@@ -361,6 +366,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.passwordResetSuccessDesc": "Uw wachtwoord is succesvol gewijzigd.",
     "auth.goToHome": "Naar startpagina",
     "auth.resetLinkExpired": "De resetlink is verlopen of ongeldig.",
+    "auth.verificationEmailSent": "Controleer uw e-mail",
+    "auth.verificationEmailSentDesc": "We hebben een verificatie-e-mail naar uw adres gestuurd. Klik op de link om uw account te activeren.",
+    "auth.checkSpam": "Controleer ook uw spam-map als u de e-mail niet kunt vinden.",
+    "auth.emailNotVerified": "E-mail niet geverifieerd",
+    "auth.emailNotVerifiedDesc": "Verifieer uw e-mail voordat u inlogt.",
     
     // Sell Car
     "sell.title": "Verkoop uw auto",
@@ -591,6 +601,11 @@ const translations: Record<Language, Record<string, string>> = {
     "auth.passwordResetSuccessDesc": "Your password has been successfully changed.",
     "auth.goToHome": "Go to home",
     "auth.resetLinkExpired": "The reset link has expired or is invalid.",
+    "auth.verificationEmailSent": "Check your email",
+    "auth.verificationEmailSentDesc": "We've sent a verification email to your address. Click the link to activate your account.",
+    "auth.checkSpam": "Also check your spam folder if you can't find the email.",
+    "auth.emailNotVerified": "Email not verified",
+    "auth.emailNotVerifiedDesc": "Please verify your email before logging in.",
     
     // Sell Car
     "sell.title": "Sell your car",

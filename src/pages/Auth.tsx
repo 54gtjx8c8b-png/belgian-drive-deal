@@ -17,6 +17,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
   
   const navigate = useNavigate();
@@ -144,9 +145,10 @@ const Auth = () => {
             });
           }
         } else {
+          setVerificationEmailSent(true);
           toast({
-            title: t("auth.accountCreated"),
-            description: t("auth.accountCreatedDesc"),
+            title: t("auth.verificationEmailSent"),
+            description: t("auth.verificationEmailSentDesc"),
           });
         }
       }
@@ -299,7 +301,33 @@ const Auth = () => {
 
           {/* Form Card */}
           <div className="glass-panel p-8">
-            {resetEmailSent ? (
+            {verificationEmailSent ? (
+              // Verification email sent confirmation
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
+                  <Mail className="w-8 h-8 text-primary" />
+                </div>
+                <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+                  {t("auth.verificationEmailSent")}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {t("auth.verificationEmailSentDesc")}
+                </p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  {t("auth.checkSpam")}
+                </p>
+                <Button
+                  onClick={() => {
+                    setVerificationEmailSent(false);
+                    setIsLogin(true);
+                  }}
+                  variant="outline"
+                  className="w-full h-12"
+                >
+                  {t("auth.backToLogin")}
+                </Button>
+              </div>
+            ) : resetEmailSent ? (
               // Email sent confirmation
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
