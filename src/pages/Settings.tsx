@@ -7,9 +7,126 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Bell, Loader2 } from "lucide-react";
+import { ArrowLeft, Bell, Loader2, Cookie, Shield, BarChart3, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+interface CookiePreferences {
+  essential: boolean;
+  analytics: boolean;
+  personalization: boolean;
+  consented: boolean;
+  timestamp?: number;
+}
+
+const COOKIE_STORAGE_KEY = "autora_cookie_preferences";
+
+function CookiePreferencesCard() {
+  const { t } = useLanguage();
+  const [cookiePrefs, setCookiePrefs] = useState<CookiePreferences>({
+    essential: true,
+    analytics: false,
+    personalization: false,
+    consented: false,
+  });
+
+  useEffect(() => {
+    const stored = localStorage.getItem(COOKIE_STORAGE_KEY);
+    if (stored) {
+      setCookiePrefs(JSON.parse(stored));
+    }
+  }, []);
+
+  const updateCookiePreference = (key: keyof CookiePreferences, value: boolean) => {
+    const updated = { ...cookiePrefs, [key]: value, timestamp: Date.now() };
+    setCookiePrefs(updated);
+    localStorage.setItem(COOKIE_STORAGE_KEY, JSON.stringify(updated));
+    toast.success("Préférences cookies mises à jour");
+  };
+
+  const resetCookieConsent = () => {
+    localStorage.removeItem(COOKIE_STORAGE_KEY);
+    window.location.reload();
+  };
+
+  const cookieCategories = [
+    {
+      id: "essential" as const,
+      icon: Shield,
+      title: "Cookies essentiels",
+      description: "Nécessaires au fonctionnement du site",
+      required: true,
+    },
+    {
+      id: "analytics" as const,
+      icon: BarChart3,
+      title: "Cookies analytiques",
+      description: "Nous aident à améliorer le site",
+      required: false,
+    },
+    {
+      id: "personalization" as const,
+      icon: Sparkles,
+      title: "Cookies de personnalisation",
+      description: "Mémorisent vos préférences",
+      required: false,
+    },
+  ];
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Cookie className="h-5 w-5" />
+          Préférences cookies
+        </CardTitle>
+        <CardDescription>
+          Gérez vos préférences de cookies conformément au RGPD
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {cookieCategories.map((category) => (
+          <div key={category.id} className="flex items-center justify-between">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <category.icon className="w-4 h-4 text-primary" />
+              </div>
+              <div className="space-y-0.5">
+                <Label className="text-base flex items-center gap-2">
+                  {category.title}
+                  {category.required && (
+                    <span className="text-xs text-primary font-normal">(requis)</span>
+                  )}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {category.description}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={cookiePrefs[category.id]}
+              onCheckedChange={(checked) => updateCookiePreference(category.id, checked)}
+              disabled={category.required}
+            />
+          </div>
+        ))}
+
+        <div className="pt-4 border-t border-border">
+          <Button
+            variant="outline"
+            onClick={resetCookieConsent}
+            className="w-full"
+          >
+            Réinitialiser le consentement cookies
+          </Button>
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            La page sera rechargée pour afficher la bannière de consentement
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -147,6 +264,8 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        <CookiePreferencesCard />
       </main>
 
       <Footer />
