@@ -95,6 +95,11 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-bold text-foreground mb-4">{t("footer.contact")}</h4>
             <ul className="space-y-3">
+              <li>
+                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {t("footer.contactForm")}
+                </Link>
+              </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 text-primary" />
                 contact@autora.be
