@@ -188,6 +188,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.privacy": "Politique de confidentialité",
     "footer.legal": "Mentions légales",
     "footer.contact": "Contact",
+    "footer.contactForm": "Formulaire de contact",
     "footer.rights": "Tous droits réservés.",
     "footer.madeWith": "Fait avec ❤️ en Belgique",
     
@@ -427,6 +428,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.privacy": "Privacybeleid",
     "footer.legal": "Wettelijke vermeldingen",
     "footer.contact": "Contact",
+    "footer.contactForm": "Contactformulier",
     "footer.rights": "Alle rechten voorbehouden.",
     "footer.madeWith": "Gemaakt met ❤️ in België",
     
@@ -666,6 +668,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.privacy": "Privacy Policy",
     "footer.legal": "Legal Notice",
     "footer.contact": "Contact",
+    "footer.contactForm": "Contact Form",
     "footer.rights": "All rights reserved.",
     "footer.madeWith": "Made with ❤️ in Belgium",
     
