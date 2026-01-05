@@ -15,6 +15,7 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Compare from "./pages/Compare";
 import SellerDashboard from "./pages/SellerDashboard";
+import SellerStats from "./pages/SellerStats";
 import Settings from "./pages/Settings";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/faq" element={<FAQ />} />
               <Route path="/compare" element={<Compare />} />
               <Route path="/dashboard" element={<SellerDashboard />} />
+              <Route path="/dashboard/stats" element={<SellerStats />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/terms" element={<Terms />} />

@@ -459,15 +459,25 @@ const SellerDashboard = () => {
                   {t("dashboard.subtitle")}
                 </p>
               </div>
-              <Button
-                onClick={exportToCSV}
-                variant="outline"
-                className="gap-2"
-                disabled={loading || listings.length === 0}
-              >
-                <Download className="w-4 h-4" />
-                {t("dashboard.exportCSV")}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => navigate("/dashboard/stats")}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  {t("dashboard.viewStats")}
+                </Button>
+                <Button
+                  onClick={exportToCSV}
+                  variant="outline"
+                  className="gap-2"
+                  disabled={loading || listings.length === 0}
+                >
+                  <Download className="w-4 h-4" />
+                  {t("dashboard.exportCSV")}
+                </Button>
+              </div>
             </div>
 
             {/* Stats Overview */}
