@@ -27,6 +27,13 @@ export const useCarFilters = (cars: Car[]) => {
       );
     }
 
+    // Model filter
+    if (filters.model) {
+      result = result.filter(
+        (car) => car.model.toLowerCase() === filters.model.toLowerCase()
+      );
+    }
+
     // Price filter
     result = result.filter(
       (car) => car.price >= filters.minPrice && car.price <= filters.maxPrice
@@ -117,6 +124,7 @@ export const useCarFilters = (cars: Car[]) => {
     let count = 0;
     if (filters.searchQuery) count++;
     if (filters.brand) count++;
+    if (filters.model) count++;
     if (filters.minPrice > 0 || filters.maxPrice < 1000000) count++;
     if (filters.fuelTypes.length > 0) count++;
     if (filters.transmission) count++;
