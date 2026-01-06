@@ -1,6 +1,7 @@
 export interface CarFilters {
   searchQuery: string;
   brand: string;
+  model: string;
   minPrice: number;
   maxPrice: number;
   fuelTypes: string[];
@@ -16,6 +17,7 @@ export interface CarFilters {
 export const defaultFilters: CarFilters = {
   searchQuery: "",
   brand: "",
+  model: "",
   minPrice: 0,
   maxPrice: 1000000,
   fuelTypes: [],

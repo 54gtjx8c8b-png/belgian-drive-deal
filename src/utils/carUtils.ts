@@ -35,6 +35,26 @@ export const getAllBrands = (): string[] => {
   return commonBrands;
 };
 
+// Get models by brand from database
+export const getModelsByBrand = async (brand: string): Promise<string[]> => {
+  if (!brand) return [];
+  
+  try {
+    const { data, error } = await supabase
+      .from('car_listings_public')
+      .select('model')
+      .eq('brand', brand)
+      .eq('status', 'approved');
+
+    if (error || !data) return [];
+
+    const uniqueModels = [...new Set(data.map(item => item.model).filter(Boolean))] as string[];
+    return uniqueModels.sort();
+  } catch {
+    return [];
+  }
+};
+
 // Get price range
 export const getPriceRange = (): { min: number; max: number } => {
   return { min: 5000, max: 150000 };

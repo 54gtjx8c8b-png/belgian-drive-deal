@@ -1,6 +1,7 @@
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car } from "lucide-react";
 import { CarFilters } from "@/types/filters";
-import { getAllBrands } from "@/utils/carUtils";
+import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -25,6 +26,31 @@ const FiltersSidebar = ({
 }: FiltersSidebarProps) => {
   const brands = getAllBrands();
   const { t } = useLanguage();
+  const [models, setModels] = useState<string[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
+
+  // Fetch models when brand changes
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (!filters.brand) {
+        setModels([]);
+        return;
+      }
+      
+      setLoadingModels(true);
+      const fetchedModels = await getModelsByBrand(filters.brand);
+      setModels(fetchedModels);
+      setLoadingModels(false);
+    };
+
+    fetchModels();
+  }, [filters.brand]);
+
+  // Reset model when brand changes
+  const handleBrandChange = (brand: string) => {
+    onFilterChange("brand", brand);
+    onFilterChange("model", "");
+  };
 
   const fuelTypes = [
     { id: "essence", label: t("filters.gasoline") },
@@ -100,7 +126,7 @@ const FiltersSidebar = ({
           <div className="relative">
             <select
               value={filters.brand}
-              onChange={(e) => onFilterChange("brand", e.target.value)}
+              onChange={(e) => handleBrandChange(e.target.value)}
               className="search-input w-full appearance-none cursor-pointer pr-10"
             >
               <option value="">{t("filters.allBrands")}</option>
@@ -112,6 +138,33 @@ const FiltersSidebar = ({
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
           </div>
+        </div>
+
+        {/* Model Select */}
+        <div className="space-y-3">
+          <h3 className="flex items-center gap-2 font-semibold text-foreground">
+            <Car className="w-4 h-4 text-primary" />
+            {t("filters.model")}
+          </h3>
+          <div className="relative">
+            <select
+              value={filters.model}
+              onChange={(e) => onFilterChange("model", e.target.value)}
+              className="search-input w-full appearance-none cursor-pointer pr-10 disabled:opacity-50"
+              disabled={!filters.brand || loadingModels}
+            >
+              <option value="">{t("filters.allModels")}</option>
+              {models.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+          </div>
+          {!filters.brand && (
+            <p className="text-xs text-muted-foreground">{t("filters.selectBrandFirst")}</p>
+          )}
         </div>
 
         {/* Fuel Type */}
