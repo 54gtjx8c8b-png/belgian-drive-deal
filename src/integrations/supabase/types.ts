@@ -277,6 +277,51 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          car_listing_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          car_listing_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          car_listing_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_preferences: {
         Row: {
           created_at: string
