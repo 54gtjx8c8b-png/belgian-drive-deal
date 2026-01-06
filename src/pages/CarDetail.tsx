@@ -30,6 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import TransparencyChecklist from "@/components/TransparencyChecklist";
 import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
+import ReviewsSection from "@/components/ReviewsSection";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -420,6 +421,12 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   {description}
                 </p>
               </div>
+
+              {/* Reviews Section */}
+              <ReviewsSection 
+                carListingId={id!} 
+                sellerId={sellerContact?.user_id}
+              />
             </div>
 
             {/* Right Column - Price & Contact */}
