@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import BrandSlider from "@/components/BrandSlider";
 import PopularCars from "@/components/PopularCars";
 import FiltersSidebar from "@/components/FiltersSidebar";
 import CarGrid from "@/components/CarGrid";
@@ -69,6 +70,9 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection onSearch={handleSearch} />
+
+        {/* Brand Slider Section */}
+        <BrandSlider />
 
         {/* Popular Cars Section */}
         <PopularCars

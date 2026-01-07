@@ -36,6 +36,9 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.verified": "Car-Pass vérifié",
     "hero.brands": "Marques",
     
+    // Brands
+    "brands.title": "Marques populaires en Belgique",
+    
     // Filters
     "filters.title": "Filtres",
     "filters.vehicles": "véhicules",
@@ -320,6 +323,9 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.verified": "Car-Pass geverifieerd",
     "hero.brands": "Merken",
     
+    // Brands
+    "brands.title": "Populaire merken in België",
+    
     // Filters
     "filters.title": "Filters",
     "filters.vehicles": "voertuigen",
@@ -603,6 +609,9 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.vehicles": "Vehicles",
     "hero.verified": "Car-Pass verified",
     "hero.brands": "Brands",
+    
+    // Brands
+    "brands.title": "Popular brands in Belgium",
     
     // Filters
     "filters.title": "Filters",
