@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { X } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -180,12 +179,6 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
                       ? "bg-primary text-primary-foreground border-2 border-primary shadow-lg shadow-primary/20"
                       : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                   )}>
-                    {/* X badge for selected brand */}
-                    {selectedBrand === brand.name && (
-                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center shadow-md animate-in zoom-in-50 duration-200">
-                        <X className="w-3 h-3" />
-                      </div>
-                    )}
                     <div className={cn(
                       "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 transition-colors duration-300",
                       selectedBrand === brand.name
