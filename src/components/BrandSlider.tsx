@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -102,8 +101,12 @@ const brands = [
   { name: "Opel" },
 ];
 
-const BrandSlider = () => {
-  const navigate = useNavigate();
+interface BrandSliderProps {
+  onBrandFilter?: (brand: string) => void;
+  selectedBrand?: string;
+}
+
+const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
   const { t } = useLanguage();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -128,6 +131,11 @@ const BrandSlider = () => {
   );
 
   const handleBrandClick = (brandName: string) => {
+    // Toggle filter: if same brand clicked, clear filter
+    if (onBrandFilter) {
+      onBrandFilter(selectedBrand === brandName ? "" : brandName);
+    }
+    
     const resultsSection = document.getElementById("results-section");
     if (resultsSection) {
       resultsSection.scrollIntoView({ behavior: "smooth" });
@@ -161,19 +169,34 @@ const BrandSlider = () => {
                 key={brand.name}
                 className="pl-2 md:pl-4 basis-1/3 md:basis-1/5"
               >
-                <div
+                <button
                   onClick={() => handleBrandClick(brand.name)}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer w-full"
                 >
-                  <div className="relative flex flex-col items-center justify-center p-4 md:p-6 rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-1">
-                    <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 text-muted-foreground group-hover:text-primary transition-colors duration-300">
+                  <div className={cn(
+                    "relative flex flex-col items-center justify-center p-4 md:p-6 rounded-xl transition-all duration-300 hover:-translate-y-1",
+                    selectedBrand === brand.name
+                      ? "bg-primary text-primary-foreground border-2 border-primary shadow-lg shadow-primary/20"
+                      : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+                  )}>
+                    <div className={cn(
+                      "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 transition-colors duration-300",
+                      selectedBrand === brand.name
+                        ? "text-primary-foreground"
+                        : "text-muted-foreground group-hover:text-primary"
+                    )}>
                       {BrandLogos[brand.name as keyof typeof BrandLogos]}
                     </div>
-                    <span className="text-xs md:text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors duration-300 text-center">
+                    <span className={cn(
+                      "text-xs md:text-sm font-medium transition-colors duration-300 text-center",
+                      selectedBrand === brand.name
+                        ? "text-primary-foreground"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}>
                       {brand.name}
                     </span>
                   </div>
-                </div>
+                </button>
               </CarouselItem>
             ))}
           </CarouselContent>
