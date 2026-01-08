@@ -72,7 +72,10 @@ const Index = () => {
         <HeroSection onSearch={handleSearch} />
 
         {/* Brand Slider Section */}
-        <BrandSlider />
+        <BrandSlider 
+          onBrandFilter={(brand) => updateFilter("brand", brand)} 
+          selectedBrand={filters.brand} 
+        />
 
         {/* Popular Cars Section */}
         <PopularCars
