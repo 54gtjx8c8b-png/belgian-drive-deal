@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin } from "lucide-react";
 import { CarFilters } from "@/types/filters";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { Slider } from "@/components/ui/slider";
@@ -15,6 +15,22 @@ interface FiltersSidebarProps {
 }
 
 const euroNorms = ["Euro 4", "Euro 5", "Euro 6", "Euro 6d"];
+
+// Belgian provinces
+const belgianProvinces = [
+  { id: "", label: "Toutes les provinces" },
+  { id: "bruxelles", label: "Bruxelles" },
+  { id: "anvers", label: "Anvers (Flandres)" },
+  { id: "brabant-flamand", label: "Brabant Flamand (Flandres)" },
+  { id: "brabant-wallon", label: "Brabant Wallon" },
+  { id: "flandre-occidentale", label: "Flandre Occidentale" },
+  { id: "flandre-orientale", label: "Flandre Orientale" },
+  { id: "hainaut", label: "Hainaut" },
+  { id: "liege", label: "Liège" },
+  { id: "limbourg", label: "Limbourg (Flandres)" },
+  { id: "luxembourg", label: "Luxembourg" },
+  { id: "namur", label: "Namur" },
+];
 
 const FiltersSidebar = ({
   isOpen,
@@ -98,7 +114,7 @@ const FiltersSidebar = ({
         className={`
           fixed lg:sticky top-20 left-0 z-50 lg:z-auto
           w-80 h-[calc(100vh-5rem)] overflow-y-auto
-          glass-panel p-6 space-y-6
+          glass-panel p-6 space-y-6 rounded-2xl
           transform transition-transform duration-300 lg:transform-none
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
@@ -106,15 +122,37 @@ const FiltersSidebar = ({
         {/* Mobile header */}
         <div className="lg:hidden flex justify-between items-center mb-4">
           <h2 className="font-display text-xl font-bold">{t("filters.title")}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-lg">
+          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-2xl">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Results count */}
-        <div className="text-center py-3 px-4 rounded-xl bg-primary/10 border border-primary/20">
+        <div className="text-center py-3 px-4 rounded-2xl bg-primary/10 border border-primary/20">
           <span className="text-primary font-bold text-lg">{resultsCount}</span>
           <span className="text-muted-foreground ml-2">{t("filters.vehicles")}</span>
+        </div>
+
+        {/* Province Select */}
+        <div className="space-y-3">
+          <h3 className="flex items-center gap-2 font-semibold text-foreground">
+            <MapPin className="w-4 h-4 text-primary" />
+            Province
+          </h3>
+          <div className="relative">
+            <select
+              value={(filters as any).province || ""}
+              onChange={(e) => onFilterChange("searchQuery" as any, e.target.value)}
+              className="search-input w-full appearance-none cursor-pointer pr-10 rounded-2xl"
+            >
+              {belgianProvinces.map((province) => (
+                <option key={province.id} value={province.id}>
+                  {province.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+          </div>
         </div>
 
         {/* Brand Select */}
@@ -127,7 +165,7 @@ const FiltersSidebar = ({
             <select
               value={filters.brand}
               onChange={(e) => handleBrandChange(e.target.value)}
-              className="search-input w-full appearance-none cursor-pointer pr-10"
+              className="search-input w-full appearance-none cursor-pointer pr-10 rounded-2xl"
             >
               <option value="">{t("filters.allBrands")}</option>
               {brands.map((brand) => (
@@ -150,7 +188,7 @@ const FiltersSidebar = ({
             <select
               value={filters.model}
               onChange={(e) => onFilterChange("model", e.target.value)}
-              className="search-input w-full appearance-none cursor-pointer pr-10 disabled:opacity-50"
+              className="search-input w-full appearance-none cursor-pointer pr-10 disabled:opacity-50 rounded-2xl"
               disabled={!filters.brand || loadingModels}
             >
               <option value="">{t("filters.allModels")}</option>
@@ -178,7 +216,7 @@ const FiltersSidebar = ({
               <button
                 key={fuel.id}
                 onClick={() => toggleFuel(fuel.id)}
-                className={`filter-chip text-center ${
+                className={`filter-chip text-center rounded-2xl ${
                   filters.fuelTypes.includes(fuel.id) ? "active" : ""
                 }`}
               >
@@ -279,7 +317,7 @@ const FiltersSidebar = ({
                     filters.transmission === trans.id ? "" : trans.id
                   )
                 }
-                className={`filter-chip flex-1 text-center ${
+                className={`filter-chip flex-1 text-center rounded-2xl ${
                   filters.transmission === trans.id ? "active" : ""
                 }`}
               >
@@ -302,7 +340,7 @@ const FiltersSidebar = ({
                 onClick={() =>
                   onFilterChange("euroNorm", filters.euroNorm === norm ? "" : norm)
                 }
-                className={`filter-chip text-center ${
+                className={`filter-chip text-center rounded-2xl ${
                   filters.euroNorm === norm ? "active" : ""
                 }`}
               >
@@ -315,7 +353,7 @@ const FiltersSidebar = ({
               type="checkbox"
               checked={filters.lezOnly}
               onChange={(e) => onFilterChange("lezOnly", e.target.checked)}
-              className="w-4 h-4 rounded border-border bg-secondary text-primary focus:ring-primary"
+              className="w-4 h-4 rounded-lg border-border bg-secondary text-primary focus:ring-primary"
             />
             <span className="text-sm text-muted-foreground">
               {t("filters.lezOnly")}
@@ -326,7 +364,7 @@ const FiltersSidebar = ({
         {/* Reset Button */}
         <button
           onClick={onReset}
-          className="w-full py-3 text-center text-sm text-muted-foreground hover:text-foreground border border-border rounded-xl hover:bg-secondary transition-colors"
+          className="w-full py-3 text-center text-sm text-muted-foreground hover:text-foreground border border-border rounded-2xl hover:bg-secondary transition-colors shadow-sm hover:shadow-lg"
         >
           {t("filters.reset")}
         </button>

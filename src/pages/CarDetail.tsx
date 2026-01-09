@@ -31,6 +31,8 @@ import TransparencyChecklist from "@/components/TransparencyChecklist";
 import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
 import ReviewsSection from "@/components/ReviewsSection";
+import BentoSpecs from "@/components/BentoSpecs";
+import AutoraTransparency from "@/components/AutoraTransparency";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -379,28 +381,19 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </div>
 
-              {/* Specifications */}
-              <div className="glass-card p-6">
-                <h2 className="font-display text-xl font-bold text-foreground mb-6">
-                  Caractéristiques
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {specs.map((spec) => (
-                    <div
-                      key={spec.label}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-secondary"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <spec.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">{spec.label}</p>
-                        <p className="font-semibold text-foreground">{spec.value}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {/* Bento Specifications */}
+              <BentoSpecs
+                year={car.year}
+                mileage={car.mileage}
+                fuelType={car.fuelType}
+                transmission={car.transmission}
+                euroNorm={car.euroNorm}
+                location={car.location}
+                power={dbListing?.power}
+                color={dbListing?.color}
+                bodyType={dbListing?.body_type}
+                doors={dbListing?.doors}
+              />
 
               {/* Transparency Checklist */}
               <TransparencyChecklist

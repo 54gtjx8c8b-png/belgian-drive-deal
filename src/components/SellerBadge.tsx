@@ -18,7 +18,7 @@ const SellerBadge = ({
   if (compact) {
     return (
       <span
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${
+        className={`inline-flex items-center gap-1 px-2 py-1 rounded-2xl text-xs font-medium ${
           isProfessional
             ? "bg-primary/10 text-primary"
             : "bg-muted text-muted-foreground"
@@ -40,16 +40,16 @@ const SellerBadge = ({
   }
 
   return (
-    <div className="p-4 rounded-xl bg-secondary/50">
+    <div className="p-4 rounded-2xl bg-secondary/50">
       {/* Seller Type Badge */}
       <div className="flex items-center gap-2 mb-2">
         {isProfessional ? (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-sm font-semibold bg-primary/10 text-primary">
             <Building2 className="w-4 h-4" />
             Vendeur Pro
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-muted text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-sm font-medium bg-muted text-muted-foreground">
             <User className="w-4 h-4" />
             Particulier
           </span>
@@ -67,10 +67,10 @@ const SellerBadge = ({
               TVA : {tvaNumber}
             </p>
           )}
-          <div className="flex items-start gap-2 p-2 rounded-lg bg-emerald-500/10">
-            <Shield className="w-4 h-4 text-emerald-500 mt-0.5" />
-            <p className="text-xs text-emerald-600 dark:text-emerald-400">
-              Garantie légale 1 an incluse (Loi belge)
+          <div className="flex items-start gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <Shield className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+              Garantie légale 12 mois incluse
             </p>
           </div>
         </div>
@@ -78,10 +78,10 @@ const SellerBadge = ({
 
       {/* Private Seller Info */}
       {!isProfessional && (
-        <div className="mt-3 flex items-start gap-2 p-2 rounded-lg bg-muted">
-          <AlertCircle className="w-4 h-4 text-muted-foreground mt-0.5" />
-          <p className="text-xs text-muted-foreground">
-            Vente privée : Pas de garantie légale obligatoire
+        <div className="mt-3 flex items-start gap-2 p-3 rounded-2xl bg-muted border border-border">
+          <AlertCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-muted-foreground">
+            Vente privée (sans garantie légale)
           </p>
         </div>
       )}
