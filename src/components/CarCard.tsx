@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { motion } from "framer-motion";
 import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
 import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -26,6 +27,26 @@ interface CarCardProps {
   onToggleFavorite?: (carId: string) => void;
   onClick?: (carId: string) => void;
 }
+
+// LEZ Badge logic
+const getLezBadgeText = (euroNorm: string, fuelType: string) => {
+  const norm = euroNorm?.toLowerCase() || "";
+  const fuel = fuelType?.toLowerCase() || "";
+  
+  if (fuel.includes("electrique") || fuel.includes("électrique") || fuel === "electric") {
+    return { text: "Accès LEZ illimité", color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" };
+  }
+  
+  if (norm.includes("euro 6") || norm === "euro 6d") {
+    return { text: "Accès LEZ illimité", color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" };
+  }
+  
+  if (norm.includes("euro 5") && fuel.includes("diesel")) {
+    return { text: "Accès LEZ limité", color: "bg-amber-500/15 text-amber-600 dark:text-amber-400" };
+  }
+  
+  return null;
+};
 
 const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
@@ -71,10 +92,14 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
     }
   };
 
+  const lezBadge = getLezBadgeText(car.euroNorm, car.fuelType);
+
   return (
-    <article
+    <motion.article
       ref={ref as React.Ref<HTMLElement>}
-      className="glass-card overflow-hidden group cursor-pointer"
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer shadow-sm hover:shadow-lg"
       onClick={handleClick}
     >
       {/* Image Container */}
@@ -89,7 +114,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
         <div className="absolute top-3 right-3 flex flex-col gap-2">
           <button
             onClick={handleFavoriteClick}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg ${
               isFavorite
                 ? "bg-red-500 text-white"
                 : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-red-500"
@@ -99,7 +124,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
           </button>
           <button
             onClick={handleCompareClick}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg ${
               inCompare
                 ? "bg-primary text-primary-foreground"
                 : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-primary"
@@ -112,14 +137,14 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-          {car.isLezCompatible && (
-            <span className="lez-badge">
+          {lezBadge && (
+            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold ${lezBadge.color}`}>
               <Shield className="w-3 h-3" />
-              LEZ OK
+              {lezBadge.text}
             </span>
           )}
           {car.hasCarPass && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-background/90 backdrop-blur-sm text-foreground">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold bg-background/90 backdrop-blur-sm text-foreground shadow-sm">
               <Shield className="w-3 h-3 text-primary" />
               Car-Pass
             </span>
@@ -128,7 +153,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3">
-          <span className="px-3 py-2 rounded-xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground">
+          <span className="px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground shadow-sm">
             {formatPrice(car.price)}
           </span>
         </div>
@@ -149,21 +174,21 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
             <Calendar className="w-3.5 h-3.5" />
             {car.year}
           </span>
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
             <Gauge className="w-3.5 h-3.5" />
             {formatMileage(car.mileage)}
           </span>
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
             <Fuel className="w-3.5 h-3.5" />
             {car.fuelType}
           </span>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 });
 

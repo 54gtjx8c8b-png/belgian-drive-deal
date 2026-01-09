@@ -86,7 +86,7 @@ const Header = () => {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? "glass-panel border-b border-border/50 shadow-lg backdrop-blur-xl py-2" 
+          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl py-2" 
           : "bg-transparent border-b border-transparent py-4"
       }`}
     >
@@ -96,15 +96,15 @@ const Header = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <img 
               src={autoraLogo} 
-              alt="AutoRa Logo" 
-              className={`rounded-xl object-cover transition-all duration-300 group-hover:scale-105 ${
+              alt="Autora Logo" 
+              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 ${
                 scrolled ? "w-8 h-8" : "w-10 h-10"
               }`}
             />
-            <span className={`font-display font-bold text-foreground transition-all duration-300 ${
+            <span className={`font-display font-bold transition-all duration-300 ${
               scrolled ? "text-lg" : "text-xl"
-            }`}>
-              Auto<span className="gradient-text">Ra</span>
+            }`} style={{ color: 'hsl(217, 91%, 60%)' }}>
+              Autora
             </span>
           </Link>
 
@@ -141,7 +141,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground rounded-2xl"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
@@ -149,20 +149,20 @@ const Header = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground rounded-2xl">
                   <Globe className="w-4 h-4" />
                   {getLanguageLabel(language)}
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[100px]">
-                <DropdownMenuItem onClick={() => setLanguage("fr")} className={language === "fr" ? "font-medium bg-accent" : ""}>
+              <DropdownMenuContent align="end" className="min-w-[100px] rounded-2xl">
+                <DropdownMenuItem onClick={() => setLanguage("fr")} className={`rounded-xl ${language === "fr" ? "font-medium bg-accent" : ""}`}>
                   Français
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("nl")} className={language === "nl" ? "font-medium bg-accent" : ""}>
+                <DropdownMenuItem onClick={() => setLanguage("nl")} className={`rounded-xl ${language === "nl" ? "font-medium bg-accent" : ""}`}>
                   Nederlands
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("en")} className={language === "en" ? "font-medium bg-accent" : ""}>
+                <DropdownMenuItem onClick={() => setLanguage("en")} className={`rounded-xl ${language === "en" ? "font-medium bg-accent" : ""}`}>
                   English
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -171,34 +171,34 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-xl gap-2">
+                  <Button variant="outline" size="sm" className="rounded-2xl gap-2 shadow-sm hover:shadow-lg transition-shadow">
                     <User className="w-4 h-4" />
                     {user.email?.split("@")[0]}
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                <DropdownMenuContent align="end" className="w-48 rounded-2xl">
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer rounded-xl">
                     <LayoutDashboard className="w-4 h-4 mr-2" />
                     {t("nav.dashboard")}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer rounded-xl">
                     <Settings className="w-4 h-4 mr-2" />
                     {t("nav.settings")}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/faq")} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/faq")} className="cursor-pointer rounded-xl">
                     <HelpCircle className="w-4 h-4 mr-2" />
                     {t("nav.faq")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500">
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500 rounded-xl">
                     <LogOut className="w-4 h-4 mr-2" />
                     {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate("/auth")}>
+              <Button variant="outline" size="sm" className="rounded-2xl shadow-sm hover:shadow-lg transition-shadow" onClick={() => navigate("/auth")}>
                 <User className="w-4 h-4 mr-2" />
                 {t("nav.login")}
               </Button>
@@ -212,13 +212,13 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground rounded-2xl"
             >
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
             
             <button
-              className="p-2 text-foreground"
+              className="p-2 text-foreground rounded-2xl hover:bg-secondary transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu"
             >
@@ -236,21 +236,21 @@ const Header = () => {
             <nav className="flex flex-col p-6 gap-1">
               <Link 
                 to="/" 
-                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors" 
+                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t("nav.buy")}
               </Link>
               <Link 
                 to="/sell" 
-                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors" 
+                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t("nav.sell")}
               </Link>
               <Link 
                 to="/favorites" 
-                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Heart className="w-5 h-5" />
@@ -258,7 +258,7 @@ const Header = () => {
               </Link>
               <Link 
                 to="/compare" 
-                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <GitCompareArrows className="w-5 h-5" />
@@ -271,7 +271,7 @@ const Header = () => {
               </Link>
               <Link 
                 to="/faq" 
-                className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <HelpCircle className="w-5 h-5" />
@@ -280,7 +280,7 @@ const Header = () => {
               {user && (
                 <Link 
                   to="/messages" 
-                  className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                  className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <MessageCircle className="w-5 h-5" />
@@ -303,7 +303,7 @@ const Header = () => {
                     <button
                       key={lang}
                       onClick={() => setLanguage(lang)}
-                      className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors ${
+                      className={`flex-1 py-2 px-4 rounded-2xl text-sm font-medium transition-colors ${
                         language === lang 
                           ? "bg-primary text-primary-foreground" 
                           : "bg-secondary text-foreground hover:bg-secondary/80"
@@ -321,7 +321,7 @@ const Header = () => {
                 <>
                   <Link 
                     to="/dashboard" 
-                    className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                    className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <LayoutDashboard className="w-5 h-5" />
@@ -329,7 +329,7 @@ const Header = () => {
                   </Link>
                   <Link 
                     to="/settings" 
-                    className="text-foreground font-medium py-3 px-4 rounded-xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
+                    className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Settings className="w-5 h-5" />
@@ -337,7 +337,7 @@ const Header = () => {
                   </Link>
                   <Button 
                     variant="outline" 
-                    className="w-full rounded-xl mt-4 h-12" 
+                    className="w-full rounded-2xl mt-4 h-12" 
                     onClick={() => {
                       handleLogout();
                       setMobileMenuOpen(false);
@@ -349,7 +349,7 @@ const Header = () => {
                 </>
               ) : (
                 <Button 
-                  className="w-full rounded-xl mt-4 h-12" 
+                  className="w-full rounded-2xl mt-4 h-12" 
                   onClick={() => {
                     navigate("/auth");
                     setMobileMenuOpen(false);
