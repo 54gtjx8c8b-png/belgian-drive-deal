@@ -8,14 +8,17 @@ import FiltersSidebar from "@/components/FiltersSidebar";
 import CarGrid from "@/components/CarGrid";
 import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
+import SEOHead from "@/components/SEOHead";
 import { useCarListings } from "@/hooks/useCarListings";
 import { useCarFilters } from "@/hooks/useCarFilters";
 import { useFavorites } from "@/hooks/useFavorites";
 import { usePagination } from "@/hooks/usePagination";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   const { cars, isLoading, hasDbCars } = useCarListings();
 
@@ -67,6 +70,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={language === "nl" ? "Vind uw volgende auto" : "Trouvez votre prochaine voiture"}
+        description={language === "nl" 
+          ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
+          : "AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie."
+        }
+        url="https://autora.be"
+      />
       <Header />
       <main>
         <HeroSection onSearch={handleSearch} />

@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
 
 const About = () => {
@@ -51,6 +52,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="À propos - AutoRa"
+        description="Découvrez AutoRa, la marketplace automobile belge de confiance. Fondée en 2024, nous révolutionnons l'achat et la vente de véhicules en Belgique."
+        url="https://autora.be/about"
+      />
       <Header />
       
       <main className="pt-24">
