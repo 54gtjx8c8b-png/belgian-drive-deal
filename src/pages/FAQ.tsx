@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { HelpCircle, Search, X, User, ShoppingCart, Car, Shield, CreditCard, Link2, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -122,6 +123,14 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={language === "nl" ? "Veelgestelde vragen" : "Questions fréquentes"}
+        description={language === "nl" 
+          ? "Vind snel antwoorden op uw vragen over AutoRa, de Car-Pass, LEZ-zones en meer."
+          : "Trouvez rapidement les réponses à vos questions sur AutoRa, le Car-Pass, les zones LEZ et bien plus encore."
+        }
+        url="https://autora.be/faq"
+      />
       <Header />
       
       <main className="pt-24">

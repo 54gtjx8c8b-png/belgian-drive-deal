@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "next-themes";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 
@@ -9,9 +10,11 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <ThemeProvider attribute="class" defaultTheme="dark">
-        <App />
-      </ThemeProvider>
+      <HelmetProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <App />
+        </ThemeProvider>
+      </HelmetProvider>
     </React.StrictMode>
   );
 }

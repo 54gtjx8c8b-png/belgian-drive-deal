@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { SellCarForm } from "@/components/SellCarForm";
 import { Button } from "@/components/ui/button";
 import { Car, Shield, Clock, CheckCircle } from "lucide-react";
@@ -40,6 +41,11 @@ export default function SellCar() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={editId ? t("sell.editTitle") : t("sell.title")}
+        description="Publiez votre annonce automobile en quelques minutes sur AutoRa et touchez des milliers d'acheteurs en Belgique."
+        url="https://autora.be/sell"
+      />
       <Header />
       
       <main className="pt-24 pb-16">

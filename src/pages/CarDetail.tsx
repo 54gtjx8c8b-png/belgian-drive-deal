@@ -33,6 +33,7 @@ import SellerBadge from "@/components/SellerBadge";
 import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
 import AutoraTransparency from "@/components/AutoraTransparency";
+import SEOHead from "@/components/SEOHead";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -288,6 +289,13 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={`${car.brand} ${car.model} ${car.year}`}
+        description={`${car.brand} ${car.model} ${car.year} - ${formatPrice(car.price)} - ${formatMileage(car.mileage)} - ${car.fuelType} - ${car.location}`}
+        image={car.image}
+        url={`https://autora.be/car/${id}`}
+        type="product"
+      />
       <Header />
       <main className="pt-24 pb-20">
         {/* Breadcrumb */}
