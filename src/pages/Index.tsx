@@ -1,18 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import BrandSlider from "@/components/BrandSlider";
 import PopularCars from "@/components/PopularCars";
 import FiltersSidebar from "@/components/FiltersSidebar";
-import CarGrid from "@/components/CarGrid";
+import LoadMoreGrid from "@/components/LoadMoreGrid";
 import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
-import { useCarListings } from "@/hooks/useCarListings";
+import { useInfiniteCarListings } from "@/hooks/useInfiniteCarListings";
 import { useCarFilters } from "@/hooks/useCarFilters";
 import { useFavorites } from "@/hooks/useFavorites";
-import { usePagination } from "@/hooks/usePagination";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
@@ -20,7 +19,14 @@ const Index = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
 
-  const { cars, isLoading, hasDbCars } = useCarListings();
+  const { 
+    cars, 
+    isLoading, 
+    isLoadingMore, 
+    hasMore, 
+    loadMore, 
+    totalCount 
+  } = useInfiniteCarListings();
 
   const {
     filters,
@@ -33,22 +39,6 @@ const Index = () => {
   } = useCarFilters(cars);
 
   const { isFavorite, toggleFavorite } = useFavorites();
-
-  const {
-    currentPage,
-    totalPages,
-    paginatedItems,
-    goToPage,
-    resetPage,
-    startItem,
-    endItem,
-    totalItems,
-  } = usePagination(filteredCars, 12);
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    resetPage();
-  }, [filters, sortBy, cars]);
 
   const handleSearch = (brand: string, model: string, maxPrice: number) => {
     updateFilter("brand", brand);
@@ -104,23 +94,22 @@ const Index = () => {
               filters={filters}
               onFilterChange={updateFilter}
               onReset={resetFilters}
-              resultsCount={totalItems}
+              resultsCount={filteredCars.length}
             />
-            <CarGrid
-              cars={paginatedItems}
+            <LoadMoreGrid
+              cars={filteredCars}
               onOpenFilters={() => setFiltersOpen(true)}
               sortBy={sortBy}
               onSortChange={setSortBy}
               isFavorite={isFavorite}
               onToggleFavorite={toggleFavorite}
               onCarClick={handleCarClick}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={goToPage}
-              startItem={startItem}
-              endItem={endItem}
-              totalItems={totalItems}
               activeFiltersCount={activeFiltersCount}
+              isLoading={isLoading}
+              isLoadingMore={isLoadingMore}
+              hasMore={hasMore}
+              onLoadMore={loadMore}
+              totalCount={totalCount}
             />
           </div>
         </section>

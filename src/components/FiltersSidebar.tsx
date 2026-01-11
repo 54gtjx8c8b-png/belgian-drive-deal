@@ -260,7 +260,7 @@ const FiltersSidebar = ({
           <div className="px-2">
             <Slider
               min={2010}
-              max={2025}
+              max={2026}
               step={1}
               value={[filters.yearMin, filters.yearMax]}
               onValueChange={([min, max]) => {
