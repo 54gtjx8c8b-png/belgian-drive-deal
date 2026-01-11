@@ -7,8 +7,8 @@ const PAGE_SIZE = 20;
 // Map database listing to Car interface
 const mapListingToCar = (listing: any): Car => {
   const lezCompatibleNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6'];
-  const isLezCompatible = lezCompatibleNorms.includes(listing.euro_norm || '') || 
-    listing.fuel_type?.toLowerCase() === 'électrique';
+  const isElectric = listing.fuel_type?.toLowerCase() === 'électrique' || listing.fuel_type?.toLowerCase() === 'electrique';
+  const isLezCompatible = lezCompatibleNorms.includes(listing.euro_norm || '') || isElectric;
 
   return {
     id: listing.id,

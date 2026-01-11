@@ -47,7 +47,7 @@ export const useCarFilters = (cars: Car[]) => {
           if (f === "essence") return fuelType === "essence";
           if (f === "diesel") return fuelType === "diesel";
           if (f === "hybride") return fuelType === "hybride";
-          if (f === "electrique") return fuelType === "électrique";
+          if (f === "electrique") return fuelType === "électrique" || fuelType === "electrique";
           return false;
         });
       });
@@ -125,12 +125,12 @@ export const useCarFilters = (cars: Car[]) => {
     if (filters.searchQuery) count++;
     if (filters.brand) count++;
     if (filters.model) count++;
-    if (filters.minPrice > 0 || filters.maxPrice < 1000000) count++;
+    if (filters.minPrice > 0 || filters.maxPrice < 200000) count++;
     if (filters.fuelTypes.length > 0) count++;
     if (filters.transmission) count++;
     if (filters.euroNorm) count++;
-    if (filters.yearMin > 2000 || filters.yearMax < 2025) count++;
-    if (filters.kmMin > 0 || filters.kmMax < 500000) count++;
+    if (filters.yearMin > 2010 || filters.yearMax < 2026) count++;
+    if (filters.kmMin > 0 || filters.kmMax < 200000) count++;
     if (filters.lezOnly) count++;
     return count;
   }, [filters]);
