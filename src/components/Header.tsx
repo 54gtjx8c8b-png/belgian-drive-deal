@@ -162,8 +162,8 @@ const Header = () => {
                 <DropdownMenuItem onClick={() => setLanguage("nl")} className={`rounded-xl ${language === "nl" ? "font-medium bg-accent" : ""}`}>
                   Nederlands
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("en")} className={`rounded-xl ${language === "en" ? "font-medium bg-accent" : ""}`}>
-                  English
+                <DropdownMenuItem onClick={() => setLanguage("de")} className={`rounded-xl ${language === "de" ? "font-medium bg-accent" : ""}`}>
+                  Deutsch
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -299,7 +299,7 @@ const Header = () => {
               <div className="px-4 py-2">
                 <p className="text-sm text-muted-foreground mb-3">{t("nav.language") || "Langue"}</p>
                 <div className="flex gap-2">
-                  {(["fr", "nl", "en"] as const).map((lang) => (
+                  {(["fr", "nl", "de"] as const).map((lang) => (
                     <button
                       key={lang}
                       onClick={() => setLanguage(lang)}
