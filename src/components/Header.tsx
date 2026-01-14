@@ -155,15 +155,18 @@ const Header = () => {
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[100px] rounded-2xl">
-                <DropdownMenuItem onClick={() => setLanguage("fr")} className={`rounded-xl ${language === "fr" ? "font-medium bg-accent" : ""}`}>
-                  Français
+            <DropdownMenuContent align="end" className="min-w-[120px] rounded-2xl bg-popover border border-border">
+                <DropdownMenuItem onClick={() => setLanguage("fr")} className={`rounded-xl cursor-pointer ${language === "fr" ? "font-medium bg-accent" : ""}`}>
+                  🇫🇷 Français
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("nl")} className={`rounded-xl ${language === "nl" ? "font-medium bg-accent" : ""}`}>
-                  Nederlands
+                <DropdownMenuItem onClick={() => setLanguage("nl")} className={`rounded-xl cursor-pointer ${language === "nl" ? "font-medium bg-accent" : ""}`}>
+                  🇧🇪 Nederlands
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("de")} className={`rounded-xl ${language === "de" ? "font-medium bg-accent" : ""}`}>
-                  Deutsch
+                <DropdownMenuItem onClick={() => setLanguage("de")} className={`rounded-xl cursor-pointer ${language === "de" ? "font-medium bg-accent" : ""}`}>
+                  🇩🇪 Deutsch
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("en")} className={`rounded-xl cursor-pointer ${language === "en" ? "font-medium bg-accent" : ""}`}>
+                  🇬🇧 English
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -298,12 +301,12 @@ const Header = () => {
               {/* Language Selector Mobile */}
               <div className="px-4 py-2">
                 <p className="text-sm text-muted-foreground mb-3">{t("nav.language") || "Langue"}</p>
-                <div className="flex gap-2">
-                  {(["fr", "nl", "de"] as const).map((lang) => (
+                <div className="grid grid-cols-4 gap-2">
+                  {(["fr", "nl", "de", "en"] as const).map((lang) => (
                     <button
                       key={lang}
                       onClick={() => setLanguage(lang)}
-                      className={`flex-1 py-2 px-4 rounded-2xl text-sm font-medium transition-colors ${
+                      className={`py-2 px-3 rounded-2xl text-sm font-medium transition-colors ${
                         language === lang 
                           ? "bg-primary text-primary-foreground" 
                           : "bg-secondary text-foreground hover:bg-secondary/80"
