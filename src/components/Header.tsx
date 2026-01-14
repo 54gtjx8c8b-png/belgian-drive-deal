@@ -101,9 +101,9 @@ const Header = () => {
                 scrolled ? "w-8 h-8" : "w-10 h-10"
               }`}
             />
-            <span className={`font-display font-bold transition-all duration-300 ${
+            <span className={`font-display font-bold text-primary transition-all duration-300 ${
               scrolled ? "text-lg" : "text-xl"
-            }`} style={{ color: 'hsl(142, 71%, 45%)' }}>
+            }`}>
               Autora
             </span>
           </Link>
