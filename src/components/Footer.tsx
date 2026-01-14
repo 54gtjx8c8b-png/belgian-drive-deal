@@ -177,29 +177,21 @@ const Footer = () => {
           </div>
           
           {/* Language Selector */}
-          <div className="flex items-center gap-2 text-sm bg-gray-800/50 rounded-full px-3 py-1">
-            <button
-              onClick={() => setLanguage("fr")}
-              className={`px-3 py-1 rounded-full transition-colors ${
-                language === "fr" 
-                  ? "bg-primary text-white font-semibold" 
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-              aria-label="Changer la langue en français"
-            >
-              FR
-            </button>
-            <button
-              onClick={() => setLanguage("nl")}
-              className={`px-3 py-1 rounded-full transition-colors ${
-                language === "nl" 
-                  ? "bg-primary text-white font-semibold" 
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-              aria-label="Taal wijzigen naar Nederlands"
-            >
-              NL
-            </button>
+          <div className="flex items-center gap-1 text-sm bg-gray-800/50 rounded-full px-2 py-1">
+            {(["fr", "nl", "de", "en"] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`px-3 py-1 rounded-full transition-colors ${
+                  language === lang 
+                    ? "bg-primary text-white font-semibold" 
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+                aria-label={`Change language to ${lang.toUpperCase()}`}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
       </div>

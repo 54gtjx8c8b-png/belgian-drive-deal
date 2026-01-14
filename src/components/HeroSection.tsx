@@ -1,6 +1,6 @@
 import { Search, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
-import { getAllBrands } from "@/utils/carUtils";
+import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeroSectionProps {
@@ -21,11 +21,28 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [selectedBudget, setSelectedBudget] = useState<number>(0);
   const [model, setModel] = useState("");
   const [brands, setBrands] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
     setBrands(getAllBrands());
   }, []);
+
+  // Fetch models when brand changes
+  useEffect(() => {
+    if (selectedBrand) {
+      setLoadingModels(true);
+      setModel(""); // Reset model when brand changes
+      getModelsByBrand(selectedBrand).then((fetchedModels) => {
+        setModels(fetchedModels);
+        setLoadingModels(false);
+      });
+    } else {
+      setModels([]);
+      setModel("");
+    }
+  }, [selectedBrand]);
 
   const handleSearch = () => {
     onSearch(selectedBrand, model, selectedBudget || 1000000);
@@ -92,15 +109,24 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Model Input */}
+              {/* Model Select - Dynamic based on brand */}
               <div className="relative">
-                <input
-                  type="text"
-                  placeholder={t("filters.model")}
+                <select
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
-                  className="search-input"
-                />
+                  className="search-input w-full appearance-none cursor-pointer pr-10"
+                  disabled={!selectedBrand}
+                >
+                  <option value="">
+                    {selectedBrand ? t("filters.allModels") : t("filters.selectBrandFirst")}
+                  </option>
+                  {models.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               </div>
 
               {/* Budget Select */}
