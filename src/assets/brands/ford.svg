@@ -1,5 +1,5 @@
-<svg viewBox="0 0 240 100" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="120" cy="50" rx="115" ry="45" fill="#003478"/>
-  <ellipse cx="120" cy="50" rx="105" ry="38" fill="none" stroke="#FFFFFF" stroke-width="3"/>
-  <text x="120" y="62" text-anchor="middle" font-family="'Times New Roman', serif" font-style="italic" font-size="48" fill="#FFFFFF">Ford</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 50">
+  <ellipse cx="60" cy="25" rx="58" ry="23" fill="#003478"/>
+  <ellipse cx="60" cy="25" rx="52" ry="18" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+  <text x="60" y="33" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="26" fill="#FFFFFF">Ford</text>
 </svg>

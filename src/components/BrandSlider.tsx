@@ -23,18 +23,18 @@ import toyotaLogo from "@/assets/brands/toyota.svg";
 import fordLogo from "@/assets/brands/ford.svg";
 import opelLogo from "@/assets/brands/opel.svg";
 
-// Brand configuration with official logos
+// Brand configuration with official logos and brand colors
 const brands = [
-  { name: "Volkswagen", logo: volkswagenLogo },
-  { name: "BMW", logo: bmwLogo },
-  { name: "Audi", logo: audiLogo },
-  { name: "Mercedes-Benz", logo: mercedesLogo },
-  { name: "Peugeot", logo: peugeotLogo },
-  { name: "Renault", logo: renaultLogo },
-  { name: "Citroën", logo: citroenLogo },
-  { name: "Toyota", logo: toyotaLogo },
-  { name: "Ford", logo: fordLogo },
-  { name: "Opel", logo: opelLogo },
+  { name: "Volkswagen", logo: volkswagenLogo, color: "#001E50" },
+  { name: "BMW", logo: bmwLogo, color: "#0066B1" },
+  { name: "Audi", logo: audiLogo, color: "#000000" },
+  { name: "Mercedes-Benz", logo: mercedesLogo, color: "#000000" },
+  { name: "Peugeot", logo: peugeotLogo, color: "#000000" },
+  { name: "Renault", logo: renaultLogo, color: "#000000" },
+  { name: "Citroën", logo: citroenLogo, color: "#AC1521" },
+  { name: "Toyota", logo: toyotaLogo, color: "#EB0A1E" },
+  { name: "Ford", logo: fordLogo, color: "#003478" },
+  { name: "Opel", logo: opelLogo, color: "#FFD700" },
 ];
 
 interface BrandSliderProps {
@@ -67,7 +67,6 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
   );
 
   const handleBrandClick = (brandName: string) => {
-    // Toggle filter: if same brand clicked, clear filter
     if (onBrandFilter) {
       onBrandFilter(selectedBrand === brandName ? "" : brandName);
     }
@@ -115,39 +114,35 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
                       ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
                       : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                   )}>
-                    {/* Selection badge */}
+                    {/* Selection badge with pulse effect */}
                     {selectedBrand === brand.name && (
-                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center animate-pulse">
-                        <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <svg className="relative w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
                     )}
                     
-                    {/* Brand logo */}
+                    {/* Brand logo container */}
                     <div className={cn(
-                      "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 transition-all duration-300",
+                      "w-16 h-16 md:w-20 md:h-20 flex items-center justify-center mb-3 transition-all duration-300 rounded-lg p-2",
                       selectedBrand === brand.name
-                        ? "scale-110"
-                        : "group-hover:scale-105"
+                        ? "scale-110 bg-white dark:bg-white/10"
+                        : "group-hover:scale-105 bg-white/80 dark:bg-white/5"
                     )}>
                       <img 
                         src={brand.logo} 
-                        alt={`${brand.name} logo`}
-                        className={cn(
-                          "w-full h-full object-contain transition-all duration-300",
-                          "dark:brightness-0 dark:invert",
-                          selectedBrand === brand.name
-                            ? "drop-shadow-lg"
-                            : "group-hover:drop-shadow-md"
-                        )}
+                        alt={`${brand.name} logo officiel`}
+                        className="w-full h-full object-contain drop-shadow-sm"
                         loading="lazy"
+                        draggable="false"
                       />
                     </div>
                     
                     {/* Brand name */}
                     <span className={cn(
-                      "text-xs md:text-sm font-medium transition-colors duration-300 text-center",
+                      "text-xs md:text-sm font-medium transition-colors duration-300 text-center leading-tight",
                       selectedBrand === brand.name
                         ? "text-primary font-semibold"
                         : "text-muted-foreground group-hover:text-foreground"
