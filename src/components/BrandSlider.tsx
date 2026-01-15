@@ -10,95 +10,31 @@ import {
 } from "@/components/ui/carousel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-// SVG logos for car brands
-const BrandLogos = {
-  Volkswagen: (
-    <svg viewBox="0 0 100 100" className="w-full h-full">
-      <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <path d="M50 8 L30 50 L50 92 L70 50 Z" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <path d="M26 30 L50 50 L74 30" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <path d="M26 70 L50 50 L74 70" fill="none" stroke="currentColor" strokeWidth="4"/>
-    </svg>
-  ),
-  BMW: (
-    <svg viewBox="0 0 100 100" className="w-full h-full">
-      <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3"/>
-      <circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" strokeWidth="2"/>
-      <path d="M50 12 L50 88 M12 50 L88 50" stroke="currentColor" strokeWidth="2"/>
-      <path d="M50 12 A38 38 0 0 1 88 50 L50 50 Z" fill="hsl(var(--primary) / 0.3)"/>
-      <path d="M12 50 A38 38 0 0 1 50 88 L50 50 Z" fill="hsl(var(--primary) / 0.3)"/>
-    </svg>
-  ),
-  Audi: (
-    <svg viewBox="0 0 140 50" className="w-full h-full">
-      <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <circle cx="55" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <circle cx="85" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <circle cx="115" cy="25" r="20" fill="none" stroke="currentColor" strokeWidth="4"/>
-    </svg>
-  ),
-  "Mercedes-Benz": (
-    <svg viewBox="0 0 100 100" className="w-full h-full">
-      <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3"/>
-      <circle cx="50" cy="50" r="8" fill="currentColor"/>
-      <line x1="50" y1="42" x2="50" y2="8" stroke="currentColor" strokeWidth="4"/>
-      <line x1="50" y1="50" x2="14" y2="75" stroke="currentColor" strokeWidth="4"/>
-      <line x1="50" y1="50" x2="86" y2="75" stroke="currentColor" strokeWidth="4"/>
-    </svg>
-  ),
-  Peugeot: (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      <path d="M40 5 C20 5 10 25 10 40 C10 55 20 65 25 70 L25 95 L55 95 L55 70 C60 65 70 55 70 40 C70 25 60 5 40 5 Z" 
-            fill="none" stroke="currentColor" strokeWidth="4"/>
-      <path d="M30 35 L40 25 L50 35 M30 50 L40 40 L50 50 M30 65 L40 55 L50 65" 
-            fill="none" stroke="currentColor" strokeWidth="3"/>
-    </svg>
-  ),
-  Renault: (
-    <svg viewBox="0 0 80 100" className="w-full h-full">
-      <path d="M40 5 L75 50 L40 95 L5 50 Z" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <path d="M40 20 L60 50 L40 80 L20 50 Z" fill="none" stroke="currentColor" strokeWidth="3"/>
-    </svg>
-  ),
-  Citroën: (
-    <svg viewBox="0 0 100 60" className="w-full h-full">
-      <path d="M10 15 L50 5 L90 15 L50 30 Z" fill="currentColor" opacity="0.8"/>
-      <path d="M10 35 L50 25 L90 35 L50 50 Z" fill="currentColor" opacity="0.6"/>
-    </svg>
-  ),
-  Toyota: (
-    <svg viewBox="0 0 120 80" className="w-full h-full">
-      <ellipse cx="60" cy="40" rx="55" ry="35" fill="none" stroke="currentColor" strokeWidth="4"/>
-      <ellipse cx="60" cy="40" rx="35" ry="20" fill="none" stroke="currentColor" strokeWidth="3"/>
-      <ellipse cx="60" cy="40" rx="15" ry="35" fill="none" stroke="currentColor" strokeWidth="3"/>
-    </svg>
-  ),
-  Ford: (
-    <svg viewBox="0 0 120 50" className="w-full h-full">
-      <ellipse cx="60" cy="25" rx="55" ry="22" fill="none" stroke="currentColor" strokeWidth="3"/>
-      <text x="60" y="32" textAnchor="middle" fontSize="22" fontFamily="serif" fontStyle="italic" fill="currentColor">Ford</text>
-    </svg>
-  ),
-  Opel: (
-    <svg viewBox="0 0 100 100" className="w-full h-full">
-      <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="3"/>
-      <path d="M10 50 L90 50" stroke="currentColor" strokeWidth="6"/>
-      <path d="M50 20 L90 50 L50 50 Z" fill="currentColor" opacity="0.3"/>
-    </svg>
-  ),
-};
 
+// Import official brand logos
+import volkswagenLogo from "@/assets/brands/volkswagen.svg";
+import bmwLogo from "@/assets/brands/bmw.svg";
+import audiLogo from "@/assets/brands/audi.svg";
+import mercedesLogo from "@/assets/brands/mercedes.svg";
+import peugeotLogo from "@/assets/brands/peugeot.svg";
+import renaultLogo from "@/assets/brands/renault.svg";
+import citroenLogo from "@/assets/brands/citroen.svg";
+import toyotaLogo from "@/assets/brands/toyota.svg";
+import fordLogo from "@/assets/brands/ford.svg";
+import opelLogo from "@/assets/brands/opel.svg";
+
+// Brand configuration with official logos
 const brands = [
-  { name: "Volkswagen" },
-  { name: "BMW" },
-  { name: "Audi" },
-  { name: "Mercedes-Benz" },
-  { name: "Peugeot" },
-  { name: "Renault" },
-  { name: "Citroën" },
-  { name: "Toyota" },
-  { name: "Ford" },
-  { name: "Opel" },
+  { name: "Volkswagen", logo: volkswagenLogo },
+  { name: "BMW", logo: bmwLogo },
+  { name: "Audi", logo: audiLogo },
+  { name: "Mercedes-Benz", logo: mercedesLogo },
+  { name: "Peugeot", logo: peugeotLogo },
+  { name: "Renault", logo: renaultLogo },
+  { name: "Citroën", logo: citroenLogo },
+  { name: "Toyota", logo: toyotaLogo },
+  { name: "Ford", logo: fordLogo },
+  { name: "Opel", logo: opelLogo },
 ];
 
 interface BrandSliderProps {
@@ -176,21 +112,44 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
                   <div className={cn(
                     "relative flex flex-col items-center justify-center p-4 md:p-6 rounded-xl transition-all duration-300 hover:-translate-y-1",
                     selectedBrand === brand.name
-                      ? "bg-primary text-primary-foreground border-2 border-primary shadow-lg shadow-primary/20"
+                      ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
                       : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                   )}>
+                    {/* Selection badge */}
+                    {selectedBrand === brand.name && (
+                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center animate-pulse">
+                        <svg className="w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    
+                    {/* Brand logo */}
                     <div className={cn(
-                      "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 transition-colors duration-300",
+                      "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-3 transition-all duration-300",
                       selectedBrand === brand.name
-                        ? "text-primary-foreground"
-                        : "text-muted-foreground group-hover:text-primary"
+                        ? "scale-110"
+                        : "group-hover:scale-105"
                     )}>
-                      {BrandLogos[brand.name as keyof typeof BrandLogos]}
+                      <img 
+                        src={brand.logo} 
+                        alt={`${brand.name} logo`}
+                        className={cn(
+                          "w-full h-full object-contain transition-all duration-300",
+                          "dark:brightness-0 dark:invert",
+                          selectedBrand === brand.name
+                            ? "drop-shadow-lg"
+                            : "group-hover:drop-shadow-md"
+                        )}
+                        loading="lazy"
+                      />
                     </div>
+                    
+                    {/* Brand name */}
                     <span className={cn(
                       "text-xs md:text-sm font-medium transition-colors duration-300 text-center",
                       selectedBrand === brand.name
-                        ? "text-primary-foreground"
+                        ? "text-primary font-semibold"
                         : "text-muted-foreground group-hover:text-foreground"
                     )}>
                       {brand.name}
