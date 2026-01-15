@@ -1,0 +1,9 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="95" fill="#001E50" stroke="#001E50" stroke-width="2"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="8">
+    <circle cx="100" cy="100" r="85"/>
+    <path d="M100 15 L58 100 L100 185 L142 100 Z"/>
+    <path d="M42 55 L100 100 L158 55"/>
+    <path d="M42 145 L100 100 L158 145"/>
+  </g>
+</svg>
