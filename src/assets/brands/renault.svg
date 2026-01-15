@@ -1,6 +1,4 @@
-<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none" stroke="#000000" stroke-width="8">
-    <path d="M100 10 L180 70 L180 170 L100 230 L20 170 L20 70 Z"/>
-    <path d="M100 40 L150 80 L150 160 L100 200 L50 160 L50 80 Z"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <path d="M50 5 L90 35 L90 85 L50 115 L10 85 L10 35 Z" fill="none" stroke="#000000" stroke-width="6"/>
+  <path d="M50 25 L75 45 L75 75 L50 95 L25 75 L25 45 Z" fill="none" stroke="#000000" stroke-width="4"/>
 </svg>
