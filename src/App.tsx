@@ -7,6 +7,7 @@ import { CompareProvider } from "@/contexts/CompareContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Analytics from "./components/Analytics";
 import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <CookieConsent />
+            <ScrollToTopButton />
           </BrowserRouter>
         </CompareProvider>
       </LanguageProvider>
