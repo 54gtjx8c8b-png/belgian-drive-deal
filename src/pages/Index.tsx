@@ -86,8 +86,8 @@ const Index = () => {
         />
 
         {/* All Listings Section */}
-        <section id="results-section" className="container mx-auto px-6 pb-20">
-          <div className="flex gap-8">
+        <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
             <FiltersSidebar
               isOpen={filtersOpen}
               onClose={() => setFiltersOpen(false)}

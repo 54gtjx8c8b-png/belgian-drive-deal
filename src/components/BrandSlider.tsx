@@ -78,9 +78,9 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
   };
 
   return (
-    <section className="py-12 bg-gradient-to-b from-muted/30 to-background">
-      <div className="container mx-auto px-6">
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-center mb-8 text-foreground">
+    <section className="py-8 sm:py-12 bg-gradient-to-b from-muted/30 to-background">
+      <div className="container mx-auto px-4 sm:px-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-center mb-6 sm:mb-8 text-foreground">
           {t("brands.title")}
         </h2>
         <Carousel
@@ -98,27 +98,27 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
           ]}
           className="w-full max-w-5xl mx-auto"
         >
-          <CarouselContent className="-ml-2 md:-ml-4">
+          <CarouselContent className="-ml-2 sm:-ml-4">
             {brands.map((brand) => (
               <CarouselItem
                 key={brand.name}
-                className="pl-2 md:pl-4 basis-1/3 md:basis-1/5"
+                className="pl-2 sm:pl-4 basis-1/4 sm:basis-1/4 md:basis-1/5"
               >
                 <button
                   onClick={() => handleBrandClick(brand.name)}
                   className="group cursor-pointer w-full"
                 >
                   <div className={cn(
-                    "relative flex flex-col items-center justify-center p-4 md:p-6 rounded-xl transition-all duration-300 hover:-translate-y-1",
+                    "relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl transition-all duration-300 hover:-translate-y-1",
                     selectedBrand === brand.name
                       ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
                       : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                   )}>
                     {/* Selection badge with pulse effect */}
                     {selectedBrand === brand.name && (
-                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                      <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <svg className="relative w-3 h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -126,7 +126,7 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
                     
                     {/* Brand logo container */}
                     <div className={cn(
-                      "w-16 h-16 md:w-20 md:h-20 flex items-center justify-center mb-3 transition-all duration-300 rounded-lg p-2",
+                      "w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center mb-1.5 sm:mb-3 transition-all duration-300 rounded-md sm:rounded-lg p-1 sm:p-2",
                       selectedBrand === brand.name
                         ? "scale-110 bg-white dark:bg-white/10"
                         : "group-hover:scale-105 bg-white/80 dark:bg-white/5"
@@ -142,7 +142,7 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
                     
                     {/* Brand name */}
                     <span className={cn(
-                      "text-xs md:text-sm font-medium transition-colors duration-300 text-center leading-tight",
+                      "text-[10px] sm:text-xs md:text-sm font-medium transition-colors duration-300 text-center leading-tight truncate w-full",
                       selectedBrand === brand.name
                         ? "text-primary font-semibold"
                         : "text-muted-foreground group-hover:text-foreground"
@@ -159,15 +159,15 @@ const BrandSlider = ({ onBrandFilter, selectedBrand }: BrandSliderProps) => {
         </Carousel>
         
         {/* Dot indicators */}
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="flex justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
           {Array.from({ length: count }).map((_, index) => (
             <button
               key={index}
               onClick={() => scrollTo(index)}
               className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
+                "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300",
                 current === index
-                  ? "bg-primary w-6"
+                  ? "bg-primary w-4 sm:w-6"
                   : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
               )}
               aria-label={`Go to slide ${index + 1}`}

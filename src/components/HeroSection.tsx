@@ -49,28 +49,28 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
   };
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-16 overflow-hidden">
+    <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" />
 
-      {/* Decorative elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
+      {/* Decorative elements - hidden on mobile for performance */}
+      <div className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
       <div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"
+        className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"
         style={{ animationDelay: "-3s" }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8 animate-fade-up">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8 animate-fade-up">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse" />
             {t("hero.badge")}
           </div>
 
           {/* Headline */}
           <h1
-            className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 animate-fade-up"
+            className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 sm:mb-6 animate-fade-up leading-tight"
             style={{ animationDelay: "0.1s" }}
           >
             {t("hero.title1")}
@@ -80,7 +80,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
 
           {/* Subheadline */}
           <p
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-up"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 animate-fade-up px-2"
             style={{ animationDelay: "0.2s" }}
           >
             {t("hero.subtitle")}
@@ -88,16 +88,16 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
 
           {/* Search Box */}
           <div
-            className="glass-panel p-3 md:p-4 max-w-3xl mx-auto animate-fade-up"
+            className="glass-panel p-2 sm:p-3 md:p-4 max-w-3xl mx-auto animate-fade-up"
             style={{ animationDelay: "0.3s" }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {/* Brand Select */}
               <div className="relative">
                 <select
                   value={selectedBrand}
                   onChange={(e) => setSelectedBrand(e.target.value)}
-                  className="search-input w-full appearance-none cursor-pointer pr-10"
+                  className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4"
                 >
                   <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
@@ -106,7 +106,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
               {/* Model Select - Dynamic based on brand */}
@@ -114,11 +114,11 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                 <select
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
-                  className="search-input w-full appearance-none cursor-pointer pr-10"
+                  className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4"
                   disabled={!selectedBrand}
                 >
                   <option value="">
-                    {selectedBrand ? t("filters.allModels") : t("filters.selectBrandFirst")}
+                    {selectedBrand ? t("filters.allModels") : t("filters.model")}
                   </option>
                   {models.map((m) => (
                     <option key={m} value={m}>
@@ -126,7 +126,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
               {/* Budget Select */}
@@ -134,7 +134,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                 <select
                   value={selectedBudget}
                   onChange={(e) => setSelectedBudget(Number(e.target.value))}
-                  className="search-input w-full appearance-none cursor-pointer pr-10"
+                  className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4"
                 >
                   <option value={0}>{t("filters.budget")}</option>
                   {budgets.map((budget) => (
@@ -143,42 +143,42 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
               {/* Search Button */}
               <button
                 onClick={handleSearch}
-                className="btn-primary-gradient flex items-center justify-center gap-2"
+                className="btn-primary-gradient flex items-center justify-center gap-2 col-span-2 md:col-span-1 py-3 sm:py-4"
               >
-                <Search className="w-5 h-5" />
-                <span className="font-semibold">{t("hero.search")}</span>
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
               </button>
             </div>
           </div>
 
           {/* Stats */}
           <div
-            className="flex flex-wrap justify-center gap-8 md:gap-16 mt-12 animate-fade-up"
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12 animate-fade-up"
             style={{ animationDelay: "0.4s" }}
           >
             <div className="text-center">
-              <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                 150+
               </div>
-              <div className="text-muted-foreground text-sm">{t("hero.vehicles")}</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.vehicles")}</div>
             </div>
             <div className="text-center">
-              <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                 98%
               </div>
-              <div className="text-muted-foreground text-sm">{t("hero.verified")}</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.verified")}</div>
             </div>
             <div className="text-center">
-              <div className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                 50+
               </div>
-              <div className="text-muted-foreground text-sm">{t("hero.brands")}</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.brands")}</div>
             </div>
           </div>
         </div>
