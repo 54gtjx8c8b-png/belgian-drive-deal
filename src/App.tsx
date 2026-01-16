@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Analytics from "./components/Analytics";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import ScrollProgressBar from "./components/ScrollProgressBar";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
@@ -38,6 +39,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollProgressBar />
             <ScrollToTop />
             <Analytics />
             <Routes>
