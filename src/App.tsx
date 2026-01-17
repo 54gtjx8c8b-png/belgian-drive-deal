@@ -27,6 +27,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Legal from "./pages/Legal";
 import Contact from "./pages/Contact";
+import AdminReports from "./pages/AdminReports";
 import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/compare" element={<Compare />} />
               <Route path="/dashboard" element={<SellerDashboard />} />
               <Route path="/dashboard/stats" element={<SellerStats />} />
+              <Route path="/admin/reports" element={<AdminReports />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/terms" element={<Terms />} />
