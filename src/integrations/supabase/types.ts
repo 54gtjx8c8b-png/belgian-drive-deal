@@ -277,6 +277,54 @@ export type Database = {
           },
         ]
       }
+      reports: {
+        Row: {
+          car_listing_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          reason: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          car_listing_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          reason: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          car_listing_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           car_listing_id: string

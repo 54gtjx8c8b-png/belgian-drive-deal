@@ -34,6 +34,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
 import AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
+import ReportAdModal from "@/components/ReportAdModal";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -517,6 +518,15 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 <p className="mt-4 text-xs text-muted-foreground text-center">
                   AutoRa n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
                 </p>
+
+                {/* Report Ad Button */}
+                <div className="mt-4 pt-4 border-t border-border flex justify-center">
+                  <ReportAdModal
+                    carListingId={id!}
+                    carBrand={car.brand}
+                    carModel={car.model}
+                  />
+                </div>
               </div>
             </div>
           </div>
