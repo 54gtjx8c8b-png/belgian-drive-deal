@@ -70,8 +70,8 @@ const Index = () => {
         url="https://autora.be"
       />
       <Header />
-      <SellCarBanner />
       <main>
+        <SellCarBanner />
         <HeroSection onSearch={handleSearch} />
 
         {/* Brand Slider Section */}
