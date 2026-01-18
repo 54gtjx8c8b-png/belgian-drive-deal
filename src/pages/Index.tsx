@@ -70,7 +70,7 @@ const Index = () => {
         url="https://autora.be"
       />
       <Header />
-      <main>
+      <main className="pt-20">
         <SellCarBanner />
         <HeroSection onSearch={handleSearch} />
 
