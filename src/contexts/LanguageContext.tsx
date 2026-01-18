@@ -420,8 +420,9 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteError": "Erreur lors de la suppression",
     
     // Sell Banner
+    "sellBanner.badge": "Gratuit",
     "sellBanner.title": "Vous avez une voiture à vendre ?",
-    "sellBanner.subtitle": "Publiez votre annonce gratuitement et touchez des milliers d'acheteurs",
+    "sellBanner.subtitle": "Publiez votre annonce gratuitement et touchez des milliers d'acheteurs en Belgique",
     "sellBanner.cta": "Vendre ma voiture",
   },
   nl: {
@@ -833,8 +834,9 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteError": "Fout bij verwijderen",
     
     // Sell Banner
+    "sellBanner.badge": "Gratis",
     "sellBanner.title": "Heeft u een auto te verkopen?",
-    "sellBanner.subtitle": "Plaats uw advertentie gratis en bereik duizenden kopers",
+    "sellBanner.subtitle": "Plaats uw advertentie gratis en bereik duizenden kopers in België",
     "sellBanner.cta": "Mijn auto verkopen",
   },
   de: {
@@ -1246,8 +1248,9 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteError": "Fehler beim Löschen",
     
     // Sell Banner
+    "sellBanner.badge": "Kostenlos",
     "sellBanner.title": "Haben Sie ein Auto zu verkaufen?",
-    "sellBanner.subtitle": "Veröffentlichen Sie Ihre Anzeige kostenlos und erreichen Sie Tausende von Käufern",
+    "sellBanner.subtitle": "Veröffentlichen Sie Ihre Anzeige kostenlos und erreichen Sie Tausende von Käufern in Belgien",
     "sellBanner.cta": "Mein Auto verkaufen",
   },
   en: {
@@ -1659,8 +1662,9 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteError": "Error deleting report",
     
     // Sell Banner
+    "sellBanner.badge": "Free",
     "sellBanner.title": "Have a car to sell?",
-    "sellBanner.subtitle": "List your car for free and reach thousands of buyers",
+    "sellBanner.subtitle": "List your car for free and reach thousands of buyers in Belgium",
     "sellBanner.cta": "Sell my car",
   },
 };
