@@ -418,6 +418,11 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteConfirm": "Cette action est irréversible. Voulez-vous continuer ?",
     "admin.reportDeleted": "Signalement supprimé",
     "admin.deleteError": "Erreur lors de la suppression",
+    
+    // Sell Banner
+    "sellBanner.title": "Vous avez une voiture à vendre ?",
+    "sellBanner.subtitle": "Publiez votre annonce gratuitement et touchez des milliers d'acheteurs",
+    "sellBanner.cta": "Vendre ma voiture",
   },
   nl: {
     // Navigation
@@ -826,6 +831,11 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteConfirm": "Deze actie kan niet ongedaan worden gemaakt. Wilt u doorgaan?",
     "admin.reportDeleted": "Melding verwijderd",
     "admin.deleteError": "Fout bij verwijderen",
+    
+    // Sell Banner
+    "sellBanner.title": "Heeft u een auto te verkopen?",
+    "sellBanner.subtitle": "Plaats uw advertentie gratis en bereik duizenden kopers",
+    "sellBanner.cta": "Mijn auto verkopen",
   },
   de: {
     // Navigation
@@ -1234,6 +1244,11 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteConfirm": "Diese Aktion kann nicht rückgängig gemacht werden. Möchten Sie fortfahren?",
     "admin.reportDeleted": "Meldung gelöscht",
     "admin.deleteError": "Fehler beim Löschen",
+    
+    // Sell Banner
+    "sellBanner.title": "Haben Sie ein Auto zu verkaufen?",
+    "sellBanner.subtitle": "Veröffentlichen Sie Ihre Anzeige kostenlos und erreichen Sie Tausende von Käufern",
+    "sellBanner.cta": "Mein Auto verkaufen",
   },
   en: {
     // Navigation
@@ -1642,6 +1657,11 @@ const translations: Record<Language, Record<string, string>> = {
     "admin.deleteConfirm": "This action cannot be undone. Do you want to continue?",
     "admin.reportDeleted": "Report deleted",
     "admin.deleteError": "Error deleting report",
+    
+    // Sell Banner
+    "sellBanner.title": "Have a car to sell?",
+    "sellBanner.subtitle": "List your car for free and reach thousands of buyers",
+    "sellBanner.cta": "Sell my car",
   },
 };
 

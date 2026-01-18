@@ -9,6 +9,7 @@ import LoadMoreGrid from "@/components/LoadMoreGrid";
 import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
+import SellCarBanner from "@/components/SellCarBanner";
 import { useInfiniteCarListings } from "@/hooks/useInfiniteCarListings";
 import { useCarFilters } from "@/hooks/useCarFilters";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -69,6 +70,7 @@ const Index = () => {
         url="https://autora.be"
       />
       <Header />
+      <SellCarBanner />
       <main>
         <HeroSection onSearch={handleSearch} />
 
