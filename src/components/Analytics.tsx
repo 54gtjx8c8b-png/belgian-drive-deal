@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 // Google Analytics tracking ID placeholder
 // To enable, add your GA4 Measurement ID as VITE_GA_MEASUREMENT_ID in .env
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
+const STORAGE_KEY = "autora_cookie_preferences";
 
 declare global {
   interface Window {
@@ -12,12 +14,33 @@ declare global {
   }
 }
 
+// Check if analytics cookies are allowed
+const isAnalyticsAllowed = (): boolean => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return false;
+    const prefs = JSON.parse(stored);
+    return prefs.consented && prefs.analytics;
+  } catch {
+    return false;
+  }
+};
+
 // Initialize Google Analytics
 export const initGA = () => {
   if (!GA_MEASUREMENT_ID) {
     console.log("Google Analytics: No measurement ID configured");
     return;
   }
+
+  // Only init if user consented to analytics
+  if (!isAnalyticsAllowed()) {
+    console.log("Google Analytics: User has not consented to analytics cookies");
+    return;
+  }
+
+  // Prevent double initialization
+  if (window.gtag) return;
 
   // Add gtag script
   const script1 = document.createElement("script");
@@ -39,7 +62,7 @@ export const initGA = () => {
 
 // Track page views
 export const trackPageView = (path: string, title?: string) => {
-  if (!GA_MEASUREMENT_ID || !window.gtag) return;
+  if (!GA_MEASUREMENT_ID || !window.gtag || !isAnalyticsAllowed()) return;
   
   window.gtag("config", GA_MEASUREMENT_ID, {
     page_path: path,
@@ -54,7 +77,7 @@ export const trackEvent = (
   label?: string,
   value?: number
 ) => {
-  if (!GA_MEASUREMENT_ID || !window.gtag) return;
+  if (!GA_MEASUREMENT_ID || !window.gtag || !isAnalyticsAllowed()) return;
 
   window.gtag("event", action, {
     event_category: category,
@@ -86,14 +109,43 @@ export const trackContactSeller = (carId: string, method: string) => {
 // Analytics component for automatic page tracking
 const Analytics = () => {
   const location = useLocation();
+  const [initialized, setInitialized] = useState(false);
+
+  // Listen for consent changes
+  useEffect(() => {
+    const checkConsent = () => {
+      if (isAnalyticsAllowed() && !initialized) {
+        initGA();
+        setInitialized(true);
+      }
+    };
+    
+    // Check on mount
+    checkConsent();
+    
+    // Listen for storage changes (consent updates)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) {
+        checkConsent();
+      }
+    };
+    
+    window.addEventListener("storage", handleStorage);
+    
+    // Also check periodically for same-tab changes
+    const interval = setInterval(checkConsent, 1000);
+    
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(interval);
+    };
+  }, [initialized]);
 
   useEffect(() => {
-    initGA();
-  }, []);
-
-  useEffect(() => {
-    trackPageView(location.pathname + location.search);
-  }, [location]);
+    if (initialized) {
+      trackPageView(location.pathname + location.search);
+    }
+  }, [location, initialized]);
 
   return null;
 };
