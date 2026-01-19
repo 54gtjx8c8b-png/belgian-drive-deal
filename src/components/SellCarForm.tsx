@@ -3,43 +3,41 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Upload, X, Car, Info, User, Camera, FileCheck, Building2 } from 'lucide-react';
+import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const sellCarSchema = z.object({
-  brand: z.string().min(1, "La marque est requise"),
-  model: z.string().min(1, "Le modèle est requis"),
+  brand: z.string().min(1, "Required"),
+  model: z.string().min(1, "Required"),
   year: z.number().min(1900).max(new Date().getFullYear() + 1),
-  price: z.number().min(1, "Le prix est requis"),
-  mileage: z.number().min(0, "Le kilométrage est requis"),
-  fuel_type: z.string().min(1, "Le type de carburant est requis"),
-  transmission: z.string().min(1, "La transmission est requise"),
-  body_type: z.string().min(1, "Le type de carrosserie est requis"),
-  color: z.string().min(1, "La couleur est requise"),
+  price: z.number().min(1, "Required"),
+  mileage: z.number().min(0, "Required"),
+  fuel_type: z.string().min(1, "Required"),
+  transmission: z.string().min(1, "Required"),
+  body_type: z.string().min(1, "Required"),
+  color: z.string().min(1, "Required"),
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
   vin: z.string().optional(),
   first_registration: z.string().optional(),
   description: z.string().optional(),
-  contact_name: z.string().min(1, "Le nom est requis"),
+  contact_name: z.string().min(1, "Required"),
   contact_phone: z.string().optional(),
-  contact_email: z.string().email("Email invalide"),
+  contact_email: z.string().email("Invalid email"),
   location: z.string().optional(),
-  // Transparency fields
   car_pass_verified: z.boolean().optional(),
   ct_valid: z.boolean().optional(),
   maintenance_book_complete: z.boolean().optional(),
-  // Seller type fields
   seller_type: z.string().optional(),
   tva_number: z.string().optional(),
 });
@@ -53,15 +51,7 @@ const brands = [
   'Dacia', 'Suzuki', 'Mitsubishi', 'Lexus', 'Jaguar', 'Land Rover', 'Jeep'
 ];
 
-const fuelTypes = ['Essence', 'Diesel', 'Hybride', 'Électrique', 'Hybride rechargeable', 'GPL'];
-const transmissions = ['Manuelle', 'Automatique'];
-const bodyTypes = ['Berline', 'SUV', 'Citadine', 'Break', 'Coupé', 'Cabriolet', 'Monospace', 'Utilitaire'];
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
-const colors = ['Noir', 'Blanc', 'Gris', 'Bleu', 'Rouge', 'Vert', 'Beige', 'Marron', 'Orange', 'Jaune'];
-const sellerTypes = [
-  { value: 'particulier', label: 'Particulier' },
-  { value: 'professionnel', label: 'Professionnel' },
-];
 
 interface SellCarFormProps {
   editId?: string;
@@ -69,12 +59,57 @@ interface SellCarFormProps {
 
 export function SellCarForm({ editId }: SellCarFormProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
   const isEditMode = !!editId;
+
+  // Translated options
+  const fuelTypes = [
+    { value: 'Essence', label: t('sellForm.fuelGasoline') },
+    { value: 'Diesel', label: t('sellForm.fuelDiesel') },
+    { value: 'Hybride', label: t('sellForm.fuelHybrid') },
+    { value: 'Électrique', label: t('sellForm.fuelElectric') },
+    { value: 'Hybride rechargeable', label: t('sellForm.fuelPluginHybrid') },
+    { value: 'GPL', label: t('sellForm.fuelLPG') },
+  ];
+
+  const transmissions = [
+    { value: 'Manuelle', label: t('sellForm.transManual') },
+    { value: 'Automatique', label: t('sellForm.transAutomatic') },
+  ];
+
+  const bodyTypes = [
+    { value: 'Berline', label: t('sellForm.bodySaloon') },
+    { value: 'SUV', label: t('sellForm.bodySUV') },
+    { value: 'Citadine', label: t('sellForm.bodyHatchback') },
+    { value: 'Break', label: t('sellForm.bodyEstate') },
+    { value: 'Coupé', label: t('sellForm.bodyCoupe') },
+    { value: 'Cabriolet', label: t('sellForm.bodyCabriolet') },
+    { value: 'Monospace', label: t('sellForm.bodyMPV') },
+    { value: 'Utilitaire', label: t('sellForm.bodyVan') },
+  ];
+
+  const colors = [
+    { value: 'Noir', label: t('sellForm.colorBlack') },
+    { value: 'Blanc', label: t('sellForm.colorWhite') },
+    { value: 'Gris', label: t('sellForm.colorGrey') },
+    { value: 'Bleu', label: t('sellForm.colorBlue') },
+    { value: 'Rouge', label: t('sellForm.colorRed') },
+    { value: 'Vert', label: t('sellForm.colorGreen') },
+    { value: 'Beige', label: t('sellForm.colorBeige') },
+    { value: 'Marron', label: t('sellForm.colorBrown') },
+    { value: 'Orange', label: t('sellForm.colorOrange') },
+    { value: 'Jaune', label: t('sellForm.colorYellow') },
+  ];
+
+  const sellerTypes = [
+    { value: 'particulier', label: t('sellForm.individual') },
+    { value: 'professionnel', label: t('sellForm.professional') },
+  ];
 
   const form = useForm<SellCarFormData>({
     resolver: zodResolver(sellCarSchema),
@@ -102,20 +137,18 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           .maybeSingle();
 
         if (error || !data) {
-          toast.error("Annonce introuvable");
+          toast.error(t('sellForm.notFound'));
           navigate('/dashboard');
           return;
         }
 
-        // Check ownership
         const { data: { user } } = await supabase.auth.getUser();
         if (data.user_id !== user?.id) {
-          toast.error("Vous n'êtes pas autorisé à modifier cette annonce");
+          toast.error(t('sellForm.notAuthorized'));
           navigate('/dashboard');
           return;
         }
 
-        // Populate form
         form.reset({
           brand: data.brand,
           model: data.model,
@@ -136,7 +169,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           contact_phone: data.contact_phone || undefined,
           contact_email: data.contact_email,
           location: data.location || undefined,
-          // New fields
           car_pass_verified: data.car_pass_verified || false,
           ct_valid: data.ct_valid || false,
           maintenance_book_complete: data.maintenance_book_complete || false,
@@ -144,21 +176,20 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           tva_number: data.tva_number || undefined,
         });
 
-        // Set existing photos
         if (data.photos && data.photos.length > 0) {
           setExistingPhotos(data.photos);
           setPhotosPreviews(data.photos);
         }
       } catch (error) {
         console.error("Error fetching listing:", error);
-        toast.error("Erreur lors du chargement de l'annonce");
+        toast.error(t('sellForm.error'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchListing();
-  }, [editId, form, navigate]);
+  }, [editId, form, navigate, t]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -168,7 +199,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     
     newPhotos.forEach(file => {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} est trop volumineux (max 5MB)`);
+        toast.error(`${file.name} ${t('sellForm.photoTooLarge')}`);
         return;
       }
       
@@ -219,20 +250,18 @@ export function SellCarForm({ editId }: SellCarFormProps) {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        toast.error("Vous devez être connecté pour vendre une voiture");
+        toast.error(t('sellForm.loginRequired'));
         navigate('/auth');
         return;
       }
 
-      // Check if we have photos (new or existing)
       const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
       if (!hasPhotos) {
-        toast.error("Ajoutez au moins une photo de votre véhicule");
+        toast.error(t('sellForm.photosRequired'));
         setIsSubmitting(false);
         return;
       }
 
-      // Upload new photos if any
       let allPhotoUrls = [...existingPhotos];
       if (photos.length > 0) {
         const newPhotoUrls = await uploadPhotos(user.id);
@@ -240,13 +269,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
       }
 
       if (allPhotoUrls.length === 0) {
-        toast.error("Erreur lors de l'upload des photos");
+        toast.error(t('sellForm.errorUpload'));
         setIsSubmitting(false);
         return;
       }
 
       if (isEditMode && editId) {
-        // Update existing listing
         const { error } = await supabase
           .from('car_listings')
           .update({
@@ -270,7 +298,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
             contact_email: data.contact_email,
             location: data.location || null,
             photos: allPhotoUrls,
-            // New fields
             car_pass_verified: data.car_pass_verified || false,
             ct_valid: data.ct_valid || false,
             maintenance_book_complete: data.maintenance_book_complete || false,
@@ -281,14 +308,13 @@ export function SellCarForm({ editId }: SellCarFormProps) {
 
         if (error) {
           console.error('Update error:', error);
-          toast.error("Erreur lors de la modification de l'annonce");
+          toast.error(t('sellForm.error'));
           return;
         }
 
-        toast.success("Votre annonce a été modifiée avec succès!");
+        toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
-        // Insert new listing
         const { error } = await supabase
           .from('car_listings')
           .insert({
@@ -314,7 +340,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
             location: data.location || null,
             photos: allPhotoUrls,
             status: 'pending',
-            // New fields
             car_pass_verified: data.car_pass_verified || false,
             ct_valid: data.ct_valid || false,
             maintenance_book_complete: data.maintenance_book_complete || false,
@@ -324,17 +349,17 @@ export function SellCarForm({ editId }: SellCarFormProps) {
 
         if (error) {
           console.error('Insert error:', error);
-          toast.error("Erreur lors de la création de l'annonce");
+          toast.error(t('sellForm.error'));
           return;
         }
 
-        toast.success("Votre annonce a été soumise avec succès!");
-        navigate('/');
+        toast.success(t('sellForm.success'));
+        navigate('/dashboard');
       }
       
     } catch (error) {
       console.error('Submit error:', error);
-      toast.error("Une erreur est survenue");
+      toast.error(t('sellForm.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -347,6 +372,31 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     }
     setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
   };
+
+  // Helper function to get LEZ warning based on euro norm
+  const getLezWarning = (euroNorm: string | undefined) => {
+    if (!euroNorm) return null;
+    
+    if (euroNorm === 'Euro 3' || euroNorm === 'Euro 4') {
+      return {
+        type: 'error' as const,
+        message: t('sellForm.euroNormHint'),
+      };
+    }
+    if (euroNorm === 'Euro 5') {
+      return {
+        type: 'warning' as const,
+        message: t('sellForm.euroNormHint'),
+      };
+    }
+    return {
+      type: 'success' as const,
+      message: t('sellForm.euroNormHint'),
+    };
+  };
+
+  const selectedEuroNorm = form.watch('euro_norm');
+  const lezWarning = getLezWarning(selectedEuroNorm);
 
   if (isLoading) {
     return (
@@ -364,7 +414,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Camera className="h-5 w-5 text-primary" />
-              Photos du véhicule
+              {t('sellForm.photosTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -388,7 +438,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                   </button>
                   {index === 0 && (
                     <span className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded">
-                      Photo principale
+                      {t('sellForm.photosMain')}
                     </span>
                   )}
                 </div>
@@ -397,7 +447,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               {photos.length < 10 && (
                 <label className="aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 bg-muted/50">
                   <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Ajouter</span>
+                  <span className="text-sm text-muted-foreground">{t('sellForm.photosAdd')}</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -409,7 +459,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               )}
             </div>
             <p className="text-sm text-muted-foreground mt-4">
-              Ajoutez jusqu'à 10 photos. La première sera la photo principale. Max 5MB par photo.
+              {t('sellForm.photosHint')}
             </p>
           </CardContent>
         </Card>
@@ -419,7 +469,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Car className="h-5 w-5 text-primary" />
-              Informations du véhicule
+              {t('sellForm.vehicleInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -428,11 +478,11 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="brand"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Marque *</FormLabel>
+                  <FormLabel>{t('sellForm.brand')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -451,9 +501,9 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="model"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Modèle *</FormLabel>
+                  <FormLabel>{t('sellForm.model')} *</FormLabel>
                   <FormControl>
-                    <Input placeholder="ex: Golf GTI" {...field} />
+                    <Input placeholder={t('sellForm.modelPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -465,7 +515,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="year"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Année *</FormLabel>
+                  <FormLabel>{t('sellForm.year')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -483,7 +533,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Prix (€) *</FormLabel>
+                  <FormLabel>{t('sellForm.price')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -502,7 +552,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="mileage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kilométrage *</FormLabel>
+                  <FormLabel>{t('sellForm.mileage')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -521,16 +571,16 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="fuel_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Carburant *</FormLabel>
+                  <FormLabel>{t('sellForm.fuel')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {fuelTypes.map(fuel => (
-                        <SelectItem key={fuel} value={fuel}>{fuel}</SelectItem>
+                        <SelectItem key={fuel.value} value={fuel.value}>{fuel.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -544,16 +594,16 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="transmission"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transmission *</FormLabel>
+                  <FormLabel>{t('sellForm.transmission')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {transmissions.map(trans => (
-                        <SelectItem key={trans} value={trans}>{trans}</SelectItem>
+                        <SelectItem key={trans.value} value={trans.value}>{trans.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -567,16 +617,16 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="body_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Carrosserie *</FormLabel>
+                  <FormLabel>{t('sellForm.bodyType')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {bodyTypes.map(body => (
-                        <SelectItem key={body} value={body}>{body}</SelectItem>
+                        <SelectItem key={body.value} value={body.value}>{body.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -590,16 +640,16 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Couleur *</FormLabel>
+                  <FormLabel>{t('sellForm.color')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {colors.map(color => (
-                        <SelectItem key={color} value={color}>{color}</SelectItem>
+                        <SelectItem key={color.value} value={color.value}>{color.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -613,7 +663,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="power"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Puissance (ch)</FormLabel>
+                  <FormLabel>{t('sellForm.power')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -632,7 +682,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="doors"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Portes</FormLabel>
+                  <FormLabel>{t('sellForm.doors')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -647,65 +697,90 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           </CardContent>
         </Card>
 
-        {/* Belgian Specifics */}
+        {/* Belgian Specifics with LEZ hints */}
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Info className="h-5 w-5 text-primary" />
-              Informations belges
+              {t('sellForm.belgianInfo')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FormField
-              control={form.control}
-              name="euro_norm"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Norme Euro</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name="euro_norm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      {t('sellForm.euroNorm')}
+                      <Leaf className="h-4 w-4 text-green-500" />
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('sellForm.select')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {euroNorms.map(norm => (
+                          <SelectItem key={norm} value={norm}>{norm}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="vin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('sellForm.vin')}</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
-                      </SelectTrigger>
+                      <Input placeholder="WVWZZZ3CZWE123456" maxLength={17} {...field} />
                     </FormControl>
-                    <SelectContent>
-                      {euroNorms.map(norm => (
-                        <SelectItem key={norm} value={norm}>{norm}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="vin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Numéro de châssis (VIN)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="WVWZZZ3CZWE123456" maxLength={17} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="first_registration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('sellForm.firstRegistration')}</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="first_registration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Première immatriculation</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* LEZ Warning Box */}
+            {lezWarning && (
+              <div className={`p-4 rounded-xl border ${
+                lezWarning.type === 'error' 
+                  ? 'bg-destructive/10 border-destructive/30 text-destructive' 
+                  : lezWarning.type === 'warning'
+                    ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400'
+                    : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400'
+              }`}>
+                <div className="flex items-start gap-3">
+                  {lezWarning.type === 'error' || lezWarning.type === 'warning' ? (
+                    <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <Leaf className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  )}
+                  <p className="text-sm">{lezWarning.message}</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -714,12 +789,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <FileCheck className="h-5 w-5 text-primary" />
-              Indicateurs de Transparence
+              {t('sellForm.transparencyTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground mb-4">
-              Ces informations rassurent les acheteurs et mettent en avant votre annonce.
+              {t('sellForm.transparencyHint')}
             </p>
             
             <FormField
@@ -735,10 +810,10 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="cursor-pointer">
-                      Car-Pass disponible
+                      {t('sellForm.carPassAvailable')}
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      Le Car-Pass certifie l'historique kilométrique du véhicule
+                      {t('sellForm.carPassHint')}
                     </p>
                   </div>
                 </FormItem>
@@ -758,10 +833,10 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="cursor-pointer">
-                      Contrôle Technique valide
+                      {t('sellForm.ctValid')}
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      Le véhicule a passé le contrôle technique récemment
+                      {t('sellForm.ctHint')}
                     </p>
                   </div>
                 </FormItem>
@@ -781,10 +856,10 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="cursor-pointer">
-                      Carnet d'entretien complet
+                      {t('sellForm.maintenanceBook')}
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
-                      L'historique d'entretien du véhicule est disponible
+                      {t('sellForm.maintenanceHint')}
                     </p>
                   </div>
                 </FormItem>
@@ -798,7 +873,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Building2 className="h-5 w-5 text-primary" />
-              Type de vendeur
+              {t('sellForm.sellerType')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -807,11 +882,11 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="seller_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Vous êtes *</FormLabel>
+                  <FormLabel>{t('sellForm.youAre')} *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('sellForm.select')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -831,12 +906,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                 name="tva_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Numéro de TVA</FormLabel>
+                    <FormLabel>{t('sellForm.vatNumber')}</FormLabel>
                     <FormControl>
                       <Input placeholder="BE0123456789" {...field} />
                     </FormControl>
                     <p className="text-xs text-muted-foreground mt-1">
-                      En tant que professionnel, vous offrez une garantie légale d'1 an (Loi belge)
+                      {t('sellForm.vatHint')}
                     </p>
                     <FormMessage />
                   </FormItem>
@@ -846,7 +921,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
 
             {form.watch('seller_type') === 'particulier' && (
               <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">
-                En tant que particulier, aucune garantie légale n'est obligatoire.
+                {t('sellForm.individualHint')}
               </p>
             )}
           </CardContent>
@@ -855,7 +930,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
         {/* Description */}
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-foreground">Description</CardTitle>
+            <CardTitle className="text-foreground">{t('sellForm.description')}</CardTitle>
           </CardHeader>
           <CardContent>
             <FormField
@@ -865,7 +940,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
                 <FormItem>
                   <FormControl>
                     <Textarea 
-                      placeholder="Décrivez votre véhicule en détail: historique, entretien, options, état..."
+                      placeholder={t('sellForm.descriptionPlaceholder')}
                       className="min-h-[150px]"
                       {...field}
                     />
@@ -882,7 +957,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <User className="h-5 w-5 text-primary" />
-              Coordonnées
+              {t('sellForm.contact')}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-6">
@@ -891,9 +966,9 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="contact_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom *</FormLabel>
+                  <FormLabel>{t('sellForm.contactName')} *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Votre nom" {...field} />
+                    <Input placeholder={t('sellForm.contactNamePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -905,7 +980,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="contact_email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email *</FormLabel>
+                  <FormLabel>{t('sellForm.contactEmail')} *</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="votre@email.be" {...field} />
                   </FormControl>
@@ -919,7 +994,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="contact_phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Téléphone</FormLabel>
+                  <FormLabel>{t('sellForm.contactPhone')}</FormLabel>
                   <FormControl>
                     <Input placeholder="+32 xxx xx xx xx" {...field} />
                   </FormControl>
@@ -933,9 +1008,9 @@ export function SellCarForm({ editId }: SellCarFormProps) {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Localisation</FormLabel>
+                  <FormLabel>{t('sellForm.location')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bruxelles, Anvers, Liège..." {...field} />
+                    <Input placeholder={t('sellForm.locationPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -947,12 +1022,15 @@ export function SellCarForm({ editId }: SellCarFormProps) {
         {/* Submit */}
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => navigate(isEditMode ? '/dashboard' : '/')}>
-            Annuler
+            {t('sellForm.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting} className="min-w-[200px]">
             {isSubmitting 
-              ? (isEditMode ? "Modification en cours..." : "Publication en cours...") 
-              : (isEditMode ? "Enregistrer les modifications" : "Publier l'annonce")}
+              ? t('sellForm.submitting')
+              : isEditMode 
+                ? t('sellForm.submitEdit')
+                : t('sellForm.submit')
+            }
           </Button>
         </div>
       </form>
